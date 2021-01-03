@@ -1,6 +1,6 @@
 import * as THREE from './node_modules/three/src/Three.js';
-
 import { PeppersGhostEffect } from './PeppersGhostEffect.js';
+
 
 let container;
 
@@ -18,9 +18,10 @@ function init() {
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
 
   scene = new THREE.Scene();
+  loadLocalScene(scene);
 
   group = new THREE.Group();
-  scene.add( group );
+  // scene.add( group );
 
   // Cube
 
@@ -93,5 +94,32 @@ function animate() {
   group.rotation.y += 0.01;
 
   effect.render( scene, camera );
+
+}
+
+function loadLocalScene(scene) {
+  const loader = new THREE.ObjectLoader();
+
+  loader.load(
+    // resource URL
+    "./resources/scene.json",
+
+    // onLoad callback
+    // Here the loaded data is assumed to be an object
+    function ( obj ) {
+      // Add the loaded object to the scene
+      scene.add( obj );
+    },
+
+    // onProgress callback
+    function ( xhr ) {
+      console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+    },
+
+    // onError callback
+    function ( err ) {
+      console.error( 'An error happened' );
+    }
+  );
 
 }
