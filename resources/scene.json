@@ -6,91 +6,22 @@
 	},
 	"geometries": [
 		{
-			"uuid": "D5A83586-155B-45C8-928C-E62743FBCC4E",
-			"type": "DodecahedronBufferGeometry",
+			"uuid": "5174183E-7483-4B8E-BBB3-232EC65D3C43",
+			"type": "TorusBufferGeometry",
 			"radius": 1,
-			"detail": 0
-		},
-		{
-			"uuid": "DF428754-033A-405F-999D-DFE6A9236B6D",
-			"type": "LatheBufferGeometry",
-			"points": [
-				{
-					"x": 0,
-					"y": 0
-				},
-				{
-					"x": 0.4,
-					"y": 0
-				},
-				{
-					"x": 0.35,
-					"y": 0.05
-				},
-				{
-					"x": 0.1,
-					"y": 0.075
-				},
-				{
-					"x": 0.08,
-					"y": 0.1
-				},
-				{
-					"x": 0.08,
-					"y": 0.4
-				},
-				{
-					"x": 0.1,
-					"y": 0.42
-				},
-				{
-					"x": 0.14,
-					"y": 0.48
-				},
-				{
-					"x": 0.2,
-					"y": 0.5
-				},
-				{
-					"x": 0.25,
-					"y": 0.54
-				},
-				{
-					"x": 0.3,
-					"y": 1.2
-				}],
-			"segments": 12,
-			"phiStart": 0,
-			"phiLength": 6.283185
+			"tube": 0.4,
+			"radialSegments": 8,
+			"tubularSegments": 6,
+			"arc": 6.283185
 		}],
 	"materials": [
 		{
-			"uuid": "E09A7419-87C5-4E93-8D56-D5EDA29FB1AF",
-			"type": "MeshStandardMaterial",
-			"color": 6958895,
-			"roughness": 1,
-			"metalness": 0,
-			"emissive": 13944004,
-			"depthFunc": 3,
-			"depthTest": true,
-			"depthWrite": true,
-			"stencilWrite": false,
-			"stencilWriteMask": 255,
-			"stencilFunc": 519,
-			"stencilRef": 0,
-			"stencilFuncMask": 255,
-			"stencilFail": 7680,
-			"stencilZFail": 7680,
-			"stencilZPass": 7680
-		},
-		{
-			"uuid": "0C0BD60D-938F-43A9-B97D-28384F8FA136",
+			"uuid": "246B8AFF-C60A-4DDF-8BFC-B10548671C7E",
 			"type": "MeshStandardMaterial",
 			"color": 16777215,
 			"roughness": 1,
 			"metalness": 0,
-			"emissive": 12721694,
-			"side": 2,
+			"emissive": 0,
 			"depthFunc": 3,
 			"depthTest": true,
 			"depthWrite": true,
@@ -111,22 +42,65 @@
 		"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
 		"children": [
 			{
-				"uuid": "87B96686-6AD2-4469-A47C-C237A058B60E",
-				"type": "Mesh",
-				"name": "Dodecahedron",
+				"uuid": "AECAC268-4FF8-46EB-B733-E158992E56FE",
+				"type": "PointLight",
+				"name": "PointLight",
 				"layers": 1,
-				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,-4.835276,2.845249,-0.694239,1],
-				"geometry": "D5A83586-155B-45C8-928C-E62743FBCC4E",
-				"material": "E09A7419-87C5-4E93-8D56-D5EDA29FB1AF"
+				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0.748326,1.107182,-1.538097,1],
+				"color": 16777215,
+				"intensity": 1,
+				"distance": 0,
+				"decay": 1,
+				"shadow": {
+					"camera": {
+						"uuid": "D5255D4C-E5F7-4A40-93D0-7B2509D986E0",
+						"type": "PerspectiveCamera",
+						"layers": 1,
+						"fov": 90,
+						"zoom": 1,
+						"near": 0.5,
+						"far": 500,
+						"focus": 10,
+						"aspect": 1,
+						"filmGauge": 35,
+						"filmOffset": 0
+					}
+				}
 			},
 			{
-				"uuid": "A0D518DE-9740-4EA4-867E-E379228C82CC",
-				"type": "Mesh",
-				"name": "Lathe",
+				"uuid": "E8EA18BB-0ACE-4829-BFCB-C40D814BDEE5",
+				"type": "PointLight",
+				"name": "PointLight",
 				"layers": 1,
-				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,-4.912431,0.620773,-0.745194,1],
-				"geometry": "DF428754-033A-405F-999D-DFE6A9236B6D",
-				"material": "0C0BD60D-938F-43A9-B97D-28384F8FA136"
+				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,1.315096,1.009942,1.550701,1],
+				"color": 16777215,
+				"intensity": 1,
+				"distance": 0,
+				"decay": 1,
+				"shadow": {
+					"camera": {
+						"uuid": "95E5F922-DEDF-4928-A703-E9FEE32DBB24",
+						"type": "PerspectiveCamera",
+						"layers": 1,
+						"fov": 90,
+						"zoom": 1,
+						"near": 0.5,
+						"far": 500,
+						"focus": 10,
+						"aspect": 1,
+						"filmGauge": 35,
+						"filmOffset": 0
+					}
+				}
+			},
+			{
+				"uuid": "FB694E86-A422-4EAA-9AD3-F481EFA8275C",
+				"type": "Mesh",
+				"name": "Torus",
+				"layers": 1,
+				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0.72299,1.252214,0,1],
+				"geometry": "5174183E-7483-4B8E-BBB3-232EC65D3C43",
+				"material": "246B8AFF-C60A-4DDF-8BFC-B10548671C7E"
 			}]
 	}
 }
