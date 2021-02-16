@@ -52,6 +52,7 @@ var PeppersGhostEffect = function ( renderer ) {
   this.render = function ( scene, camera ) {
 
     scene.updateMatrixWorld();
+    console.log("look at me, RENDER FUNCTION")
 
     if ( camera.parent === null ) camera.updateMatrixWorld();
 
