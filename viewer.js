@@ -5,7 +5,8 @@ import { PeppersGhostEffect } from './PeppersGhostEffect.js';
 let container;
 
 let camera, scene, renderer, effect;
-let group;
+let originalZoom; 
+// let group;
 
 init();
 animate();
@@ -75,6 +76,12 @@ function init() {
   effect = new PeppersGhostEffect( renderer );
   effect.setSize( window.innerWidth, window.innerHeight );
   effect.cameraDistance = 5;
+  // value of originalZoom is set only once to keep track of initial model size
+  originalZoom = effect.cameraDistance;
+  
+  /* START: place holders for polling for interaction events */
+  scaleModel(0);
+  /* END: place holders for polling for interaction events */
 
   window.addEventListener( 'resize', onWindowResize, false );
 
@@ -99,6 +106,22 @@ function animate() {
 
   effect.render( scene, camera );
 
+}
+
+// Input: zoom percentage number: positive for zooming in & negative for zooming out
+function scaleModel(zoomPercent){
+  var scaleFactor = zoomPercent / 100;
+  
+  if (scaleFactor >= 0 && scaleFactor < 1) {
+    // zoom in by pushing cameras closer to origin
+    effect.cameraDistance = originalZoom * (1 - scaleFactor); 
+  } else if (scaleFactor < 0) {
+    // zoom out by pulling cameras further away from origin
+    scaleFactor = Math.abs(scaleFactor);
+    effect.cameraDistance = originalZoom * (1 + scaleFactor); 
+  } else {
+    console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
+  }
 }
 
 function loadLocalScene(scene) {

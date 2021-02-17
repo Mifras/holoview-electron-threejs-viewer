@@ -12,7 +12,6 @@ var PeppersGhostEffect = function ( renderer ) {
 
   var scope = this;
 
-  scope.cameraDistance = 15;
   // TODO: notify group that we need to set this to true
   scope.reflectFromAbove = false;
 
@@ -63,6 +62,7 @@ var PeppersGhostEffect = function ( renderer ) {
     _cameraF.position.copy( _position );
     _cameraF.quaternion.copy( _quaternion );
     _cameraF.translateZ( scope.cameraDistance );
+    // rotate the camera around its own center of mass, so that it faces the origin of the scene
     _cameraF.lookAt( scene.position );
 
     // back
@@ -70,6 +70,8 @@ var PeppersGhostEffect = function ( renderer ) {
     _cameraB.quaternion.copy( _quaternion );
     _cameraB.translateZ( - ( scope.cameraDistance ) );
     _cameraB.lookAt( scene.position );
+    // rotate the camera lens in-place 180 degrees around the z axis 
+    //    (similar to how you can rotate your head to see things sideways, without moving your body)
     _cameraB.rotation.z += 180 * ( Math.PI / 180 );
 
     // left
@@ -77,6 +79,7 @@ var PeppersGhostEffect = function ( renderer ) {
     _cameraL.quaternion.copy( _quaternion );
     _cameraL.translateX( - ( scope.cameraDistance ) );
     _cameraL.lookAt( scene.position );
+    // rotate the camera lens in-place 90 degrees around the x axis 
     _cameraL.rotation.x += 90 * ( Math.PI / 180 );
 
     // right
@@ -84,6 +87,7 @@ var PeppersGhostEffect = function ( renderer ) {
     _cameraR.quaternion.copy( _quaternion );
     _cameraR.translateX( scope.cameraDistance );
     _cameraR.lookAt( scene.position );
+    // rotate the camera 90 degrees around the x axis in-place 
     _cameraR.rotation.x += 90 * ( Math.PI / 180 );
 
 
