@@ -20,6 +20,7 @@ function init() {
   scene = new THREE.Scene();
   loadLocalScene(scene);
 
+  /*
   group = new THREE.Group();
   // scene.add( group );
 
@@ -65,6 +66,7 @@ function init() {
     group.add( cube );
 
   }
+  */
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -91,7 +93,9 @@ function animate() {
 
   requestAnimationFrame( animate );
 
+  /*
   group.rotation.y += 0.01;
+  */
 
   effect.render( scene, camera );
 
