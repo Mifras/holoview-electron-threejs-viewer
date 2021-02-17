@@ -13,6 +13,7 @@ var PeppersGhostEffect = function ( renderer ) {
   var scope = this;
 
   scope.cameraDistance = 15;
+  // TODO: notify group that we need to set this to true
   scope.reflectFromAbove = false;
 
   // Internals
