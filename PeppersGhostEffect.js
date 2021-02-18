@@ -3,6 +3,7 @@ import {
   Quaternion,
   Vector3
 } from './node_modules/three/src/Three.js';
+import { OrbitControls } from "./node_modules/three/examples/jsm/controls/OrbitControls.js";
 
 /**
  * peppers ghost effect based on http://www.instructables.com/id/Reflective-Prism/?ALLSTEPS
@@ -91,9 +92,22 @@ var PeppersGhostEffect = function ( renderer ) {
     _cameraR.rotation.x += 90 * ( Math.PI / 180 );
 
 
+    // /* START: experiment with orbit controls for rotation around center of 3D model */
+    // scope.orbitF = new OrbitControls( _cameraF, renderer.domElement );
+    // scope.orbitF.autoRotate = true;
+    // scope.orbitB = new OrbitControls( _cameraB, renderer.domElement );
+    // scope.orbitB.autoRotate = true;
+    // scope.orbitL = new OrbitControls( _cameraL, renderer.domElement );
+    // scope.orbitL.autoRotate = true;
+    // scope.orbitR = new OrbitControls( _cameraR, renderer.domElement );
+    // scope.orbitR.autoRotate = true;
+    // /* END: experiment with orbit controls for rotation around center of 3D model */
+
     renderer.clear();
     renderer.setScissorTest( true );
 
+    // "Scissor" and "Viewport" are cropped areas of the viewer application window:
+    //    This is the area used to render 1 view of the 3D model (1 view out of the 4 perspective cameras)
     renderer.setScissor( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height );
     renderer.setViewport( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height );
 

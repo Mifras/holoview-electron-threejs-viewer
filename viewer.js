@@ -80,7 +80,7 @@ function init() {
   originalZoom = effect.cameraDistance;
   
   /* START: place holders for polling for interaction events */
-  scaleModel(0);
+  scaleModel(20);
   /* END: place holders for polling for interaction events */
 
   window.addEventListener( 'resize', onWindowResize, false );
@@ -100,15 +100,21 @@ function animate() {
 
   requestAnimationFrame( animate );
 
-  /*
-  group.rotation.y += 0.01;
-  */
+  // /* START: experiment with orbit controls for rotation around center of 3D model */
+  // TODO: If orbit controls fails, could try rotating full scene (setting it as group like below with cubes example)
+  // effect.orbitF.update();
+  // effect.orbitB.update();
+  // effect.orbitL.update();
+  // effect.orbitR.update();
+
+  // /* END: experiment with orbit controls for rotation around center of 3D model */
+  // group.rotation.y += 0.01;
 
   effect.render( scene, camera );
 
 }
 
-// Input: zoom percentage number: positive for zooming in & negative for zooming out
+// Input: Zoom percentage number: positive for zooming in & negative for zooming out
 function scaleModel(zoomPercent){
   var scaleFactor = zoomPercent / 100;
   
@@ -120,6 +126,7 @@ function scaleModel(zoomPercent){
     scaleFactor = Math.abs(scaleFactor);
     effect.cameraDistance = originalZoom * (1 + scaleFactor); 
   } else {
+    // cannot zoom in by more than 100%, as that places all cameras at the origin point
     console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
   }
 }
