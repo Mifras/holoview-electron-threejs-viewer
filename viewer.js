@@ -5,7 +5,7 @@ import { PeppersGhostEffect } from './PeppersGhostEffect.js';
 let container;
 
 let camera, scene, renderer, effect;
-let originalZoom; 
+let initCameraDistance; 
 // let group;
 
 init();
@@ -73,11 +73,9 @@ function init() {
   renderer.setPixelRatio( window.devicePixelRatio );
   container.appendChild( renderer.domElement );
 
-  effect = new PeppersGhostEffect( renderer );
+  initCameraDistance = 5; // keeps track of initial zoom level; set it only once
+  effect = new PeppersGhostEffect( renderer, initCameraDistance );
   effect.setSize( window.innerWidth, window.innerHeight );
-  effect.cameraDistance = 5;
-  // value of originalZoom is set only once to keep track of initial model size
-  originalZoom = effect.cameraDistance;
   
   /* START: place holders for polling for interaction events */
   scaleModel(20);
@@ -100,14 +98,6 @@ function animate() {
 
   requestAnimationFrame( animate );
 
-  // /* START: experiment with orbit controls for rotation around center of 3D model */
-  // TODO: If orbit controls fails, could try rotating full scene (setting it as group like below with cubes example)
-  // effect.orbitF.update();
-  // effect.orbitB.update();
-  // effect.orbitL.update();
-  // effect.orbitR.update();
-
-  // /* END: experiment with orbit controls for rotation around center of 3D model */
   // group.rotation.y += 0.01;
 
   effect.render( scene, camera );
@@ -120,11 +110,11 @@ function scaleModel(zoomPercent){
   
   if (scaleFactor >= 0 && scaleFactor < 1) {
     // zoom in by pushing cameras closer to origin
-    effect.cameraDistance = originalZoom * (1 - scaleFactor); 
+    effect.cameraDistance = initCameraDistance * (1 - scaleFactor); 
   } else if (scaleFactor < 0) {
     // zoom out by pulling cameras further away from origin
     scaleFactor = Math.abs(scaleFactor);
-    effect.cameraDistance = originalZoom * (1 + scaleFactor); 
+    effect.cameraDistance = initCameraDistance * (1 + scaleFactor); 
   } else {
     // cannot zoom in by more than 100%, as that places all cameras at the origin point
     console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
