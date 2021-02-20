@@ -126,7 +126,7 @@ function loadLocalScene(scene) {
 
   loader.load(
     // resource URL
-    "./resources/scene2.json",
+    "./resources/cylinder_with_spheres.json",
 
     // onLoad callback
     // Here the loaded data is assumed to be an object
