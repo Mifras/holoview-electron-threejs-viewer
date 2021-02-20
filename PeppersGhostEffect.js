@@ -135,11 +135,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     if ( this.reflectFromAbove ) {
       _orbitR.update();
       // rotate the camera lens in-place 90 degrees around the x axis 
-      _cameraR.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraR.rotation.z -= 90 * ( Math.PI / 180 );
       renderer.render( scene, _cameraR );
     } else {
       _orbitL.update();
-      _cameraL.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraL.rotation.z += 90 * ( Math.PI / 180 );
       renderer.render( scene, _cameraL );
     }
 
@@ -148,11 +148,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
     if ( this.reflectFromAbove ) {
       _orbitL.update();
-      _cameraL.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraL.rotation.z += 90 * ( Math.PI / 180 );
       renderer.render( scene, _cameraL );
     } else {
       _orbitR.update();
-      _cameraR.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraR.rotation.z -= 90 * ( Math.PI / 180 );
       renderer.render( scene, _cameraR );
     }
 
