@@ -5,7 +5,6 @@ const path = require('path');
 const dialog = electron.remote.dialog;
 
 var uploadFile = document.getElementById('upload');
-console.log("objectLoader script start");
 
 global.filepath = undefined;
 
@@ -29,9 +28,31 @@ uploadFile.addEventListener('click', () => {
             var sceneDirectory = someScenePath.slice(0, lastSeenSlash + 1);
             var sortedPathsArray = path.filePaths.sort()
 
+            var fileToPathMap = {};
+
+            // create the fileToPath obj
+            sortedPathsArray.forEach(str => {
+                var lastSlash = str.lastIndexOf("\\");
+                var startOfFileExtension = str.indexOf(".json");
+                var fileName = str.substring(lastSlash + 1, startOfFileExtension);
+
+                fileToPathMap[fileName] = str;
+            })
+
+            // create the currentScene obj
+            var firstSceneName;
+            for (var sceneName in fileToPathMap) {
+                firstSceneName = sceneName;
+                break;
+            }
+            
+            var currentScene = {
+                [firstSceneName]: fileToPathMap[firstSceneName]
+            }
+
             localStorage.setItem('sceneDirectory', sceneDirectory);
-            localStorage.setItem('allScenes', sortedPathsArray);
-            localStorage.setItem('currentScene', sortedPathsArray[0]);
+            localStorage.setItem('allScenes', JSON.stringify(fileToPathMap));
+            localStorage.setItem('currentScene', JSON.stringify(currentScene));
         }   
     }).catch(err => { 
         console.log(err) 

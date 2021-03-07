@@ -126,11 +126,15 @@ function scaleModel(zoomPercent){
  */
 function loadLocalScene(scene) {
   const loader = new THREE.ObjectLoader();
+  
+  var currentScene = JSON.parse(localStorage.getItem('currentScene'));
+  var currentSceneName = Object.keys(currentScene)[0];
+  var currentScenePath = currentScene[currentSceneName]
 
   loader.load(
      
     // resource URL
-    localStorage.getItem('currentScene'),
+    currentScenePath,
 
     // onLoad callback
     // Here the loaded data is assumed to be an object
