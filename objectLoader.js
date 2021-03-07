@@ -16,15 +16,19 @@ uploadFile.addEventListener('click', () => {
         title: 'Select the directory containing the scene objects', 
         defaultPath: path.join(__dirname, '../assets/'), 
         buttonLabel: 'Select all scene files', 
-        properties: ['multiSelections'] 
+        properties: ['multiSelections', 'openFile', 'openDirectory'] 
     }).then(path => { 
-        // only works for windows atm
         // whether dialog operation was cancelled or not. 
         if (!path.canceled) { 
             // Updating directory to scene objects and grabbing the first scene
-            var someScenePath = path.filePaths[0].split("/").toString();
-            // assuming all scenes in one directory ofcourse
-            var lastSeenSlash = someScenePath.lastIndexOf("\\");
+            var someScenePath = path.filePaths[0]
+
+            // account for unix vs windows path slash
+            if (process.platform !== 'darwin') {
+                var lastSeenSlash = someScenePath.lastIndexOf("\\");
+            } else {
+                var lastSeenSlash = someScenePath.lastIndexOf("/");
+            }
             var sceneDirectory = someScenePath.slice(0, lastSeenSlash + 1);
             var sortedPathsArray = path.filePaths.sort()
 
@@ -32,7 +36,11 @@ uploadFile.addEventListener('click', () => {
 
             // create the fileToPath obj
             sortedPathsArray.forEach(str => {
-                var lastSlash = str.lastIndexOf("\\");
+                if (process.platform !== 'darwin') {
+                    var lastSlash = str.lastIndexOf("\\");
+                } else {
+                    var lastSlash = str.lastIndexOf("/");
+                }
                 var startOfFileExtension = str.indexOf(".json");
                 var fileName = str.substring(lastSlash + 1, startOfFileExtension);
 
@@ -58,4 +66,3 @@ uploadFile.addEventListener('click', () => {
         console.log(err) 
     });
 })
-
