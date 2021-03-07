@@ -1,3 +1,5 @@
+import vars from './GlobalVariables.js';
+
 const electron = require('electron'); 
 const path = require('path'); 
 
@@ -7,8 +9,6 @@ const dialog = electron.remote.dialog;
 var uploadFile = document.getElementById('upload');
 console.log("objectLoader script start");
 
-import vars from './GlobalVariables.js';
-
 global.filepath = undefined;
 
 uploadFile.addEventListener('click', () => {
@@ -16,16 +16,25 @@ uploadFile.addEventListener('click', () => {
     dialog.showOpenDialog({ 
         title: 'Select the directory containing the scene objects', 
         defaultPath: path.join(__dirname, '../assets/'), 
-        buttonLabel: 'Select this directory', 
-        properties: ['openDirectory'] 
-    }).then(file => { 
+        buttonLabel: 'Select all scene files', 
+        properties: ['multiSelections'] 
+    }).then(path => { 
+        // only works for windows atm
         // whether dialog operation was cancelled or not. 
-        if (!file.canceled) { 
-            // Updating the GLOBAL filepath variable  
-            // to user-selected file. 
-            global.filepath = file.filePaths[0].toString();
-            vars.objectDirectory = global.filepath;
-            // console.log(vars.objectDirectory);
+        if (!path.canceled) { 
+            // Updating directory to scene objects and grabbing the first scene
+            var someScenePath = path.filePaths[0].split("/").toString();
+            // assuming all scenes in one directory ofcourse
+            var lastSeenSlash = someScenePath.lastIndexOf("\\");
+            var sceneDirectory = someScenePath.slice(0, lastSeenSlash + 1);
+
+            var sortedPathsArray = path.filePaths.sort()
+            
+            vars.sceneDirectory = sceneDirectory;
+            vars.allScenes = sortedPathsArray;
+            vars.currentScene = sortedPathsArray[0];
+
+            console.log(vars);
         }   
     }).catch(err => { 
         console.log(err) 

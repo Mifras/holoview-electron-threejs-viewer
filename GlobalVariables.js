@@ -1,5 +1,7 @@
 const vars = {
-    objectDirectory: "something direcortsdioiosdfuy"
+    sceneDirectory: "",
+    allScenes: [],
+    currentScene: ""
 };
 
 export default vars;

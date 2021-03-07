@@ -10,7 +10,7 @@ function createWindow () {
     }
   })
 
-  win.loadFile('index.html')
+  win.loadFile('import.html')
 }
 
 app.whenReady().then(createWindow)
