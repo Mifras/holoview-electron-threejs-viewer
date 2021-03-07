@@ -1,5 +1,3 @@
-import vars from './GlobalVariables.js';
-
 const electron = require('electron'); 
 const path = require('path'); 
 
@@ -11,6 +9,8 @@ console.log("objectLoader script start");
 
 global.filepath = undefined;
 
+// global var should have map for all objects instead of arr of paths
+// support mac
 uploadFile.addEventListener('click', () => {
 
     dialog.showOpenDialog({ 
@@ -27,14 +27,11 @@ uploadFile.addEventListener('click', () => {
             // assuming all scenes in one directory ofcourse
             var lastSeenSlash = someScenePath.lastIndexOf("\\");
             var sceneDirectory = someScenePath.slice(0, lastSeenSlash + 1);
-
             var sortedPathsArray = path.filePaths.sort()
-            
-            vars.sceneDirectory = sceneDirectory;
-            vars.allScenes = sortedPathsArray;
-            vars.currentScene = sortedPathsArray[0];
 
-            console.log(vars);
+            localStorage.setItem('sceneDirectory', sceneDirectory);
+            localStorage.setItem('allScenes', sortedPathsArray);
+            localStorage.setItem('currentScene', sortedPathsArray[0]);
         }   
     }).catch(err => { 
         console.log(err) 

@@ -1,6 +1,5 @@
 import * as THREE from './node_modules/three/src/Three.js';
 import { PeppersGhostEffect } from './PeppersGhostEffect.js';
-import vars from './GlobalVariables.js';
 
 let container;
 
@@ -123,7 +122,7 @@ function scaleModel(zoomPercent){
 
 /**
  * Call loadLocalScene after updating the path to the next/ specified scene
- * @mifras implement a method to update the vars.currentScene path
+ * @mifras implement a method to update the localStorage.currentScene path
  */
 function loadLocalScene(scene) {
   const loader = new THREE.ObjectLoader();
@@ -131,8 +130,7 @@ function loadLocalScene(scene) {
   loader.load(
      
     // resource URL
-    "./resources/scene2.json",
-    // vars.currentScene,
+    localStorage.getItem('currentScene'),
 
     // onLoad callback
     // Here the loaded data is assumed to be an object
@@ -143,7 +141,7 @@ function loadLocalScene(scene) {
 
     // onProgress callback
     function ( xhr ) {
-      console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+      // console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
     },
 
     // onError callback

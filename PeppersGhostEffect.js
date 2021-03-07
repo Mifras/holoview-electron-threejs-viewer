@@ -62,7 +62,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     if (this.prevCameraDistance != this.cameraDistance) {
       // this is our first time rendering or model zoom level has changed
       scene.updateMatrixWorld();
-      console.log("look at me, RENDER FUNCTION");
+      // console.log("look at me, RENDER FUNCTION");
 
       if ( camera.parent === null ) camera.updateMatrixWorld();
 
