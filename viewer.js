@@ -1,12 +1,10 @@
 import * as THREE from './node_modules/three/src/Three.js';
-import { PeppersGhostEffect } from './PeppersGhostEffect.js';
+import { PeppersGhostEffect } from './PeppersGhostEffect.js'; 
+import { BLEControls } from './BLEControls.js';
 
-
-let container;
-
-let camera, scene, renderer, effect;
-let initCameraDistance; 
 // let group;
+let container, camera, scene, renderer, effect;
+let initCameraDistance; 
 
 init();
 animate();
@@ -20,6 +18,8 @@ function init() {
 
   scene = new THREE.Scene();
   loadLocalScene(scene);
+
+  BLEControls();
 
   /*
   group = new THREE.Group();
