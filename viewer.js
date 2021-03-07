@@ -1,7 +1,6 @@
 import * as THREE from './node_modules/three/src/Three.js';
 import { PeppersGhostEffect } from './PeppersGhostEffect.js';
 
-
 let container;
 
 let camera, scene, renderer, effect;
@@ -121,10 +120,16 @@ function scaleModel(zoomPercent){
   }
 }
 
+/**
+ * 
+ * Call loadLocalScene updating the path to the next/ specified interaction
+ * There will be a seperate method to handle that
+ */
 function loadLocalScene(scene) {
   const loader = new THREE.ObjectLoader();
 
   loader.load(
+     
     // resource URL
     "./resources/scene2.json",
 
