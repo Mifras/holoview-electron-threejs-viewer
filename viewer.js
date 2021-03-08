@@ -5,6 +5,7 @@ import { BLEControls } from './BLEControls.js';
 // let group;
 let container, camera, scene, renderer, effect;
 let initCameraDistance; 
+let controls;
 
 init();
 animate();
@@ -19,7 +20,7 @@ function init() {
   scene = new THREE.Scene();
   loadLocalScene(scene);
 
-  BLEControls();
+  controls = BLEControls();
 
   /*
   group = new THREE.Group();
@@ -76,10 +77,6 @@ function init() {
   initCameraDistance = 5; // keeps track of initial zoom level; set it only once
   effect = new PeppersGhostEffect( renderer, initCameraDistance );
   effect.setSize( window.innerWidth, window.innerHeight );
-  
-  /* START: place holders for polling for interaction events */
-  scaleModel(20);
-  /* END: place holders for polling for interaction events */
 
   window.addEventListener( 'resize', onWindowResize, false );
 
@@ -102,6 +99,9 @@ function animate() {
 
   effect.render( scene, camera );
 
+  /* START: place holders for polling for interaction events */
+  scaleModel(20);
+  /* END: place holders for polling for interaction events */
 }
 
 // Input: Zoom percentage number: positive for zooming in & negative for zooming out

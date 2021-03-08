@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "three": "^0.126.1",
-    "@abandonware/noble": "^1.9.2-12"
+    "@abandonware/noble": "1.9.2-10"
   }
 }
