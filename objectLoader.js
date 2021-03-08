@@ -11,12 +11,20 @@ global.filepath = undefined;
 // global var should have map for all objects instead of arr of paths
 // support mac
 uploadFile.addEventListener('click', () => {
+    
+    // account for different file structure operating systems
+    var dialogProps;
+    if (process.platform !== 'darwin') {
+        dialogProps = ['multiSelections'];
+    } else {
+        dialogProps = ['multiSelections', 'openFile', 'openDirectory']; 
+    }
 
     dialog.showOpenDialog({ 
         title: 'Select the directory containing the scene objects', 
         defaultPath: path.join(__dirname, '../assets/'), 
         buttonLabel: 'Select all scene files', 
-        properties: ['multiSelections', 'openFile', 'openDirectory'] 
+        properties:  dialogProps
     }).then(path => { 
         // whether dialog operation was cancelled or not. 
         if (!path.canceled) { 
