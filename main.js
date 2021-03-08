@@ -5,11 +5,12 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
+      enableRemoteModule: true,
       nodeIntegration: true
     }
   })
 
-  win.loadFile('index.html')
+  win.loadFile('import.html')
 }
 
 app.whenReady().then(createWindow)
