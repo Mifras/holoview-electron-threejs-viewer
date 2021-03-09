@@ -4,7 +4,7 @@ import { BLEControls } from './BLEControls.js';
 
 // let group;
 let container, camera, scene, renderer, effect;
-let initCameraDistance; 
+let currCameraDistance; 
 let controls;
 
 init();
@@ -20,62 +20,15 @@ function init() {
   scene = new THREE.Scene();
   loadLocalScene(scene);
 
-  controls = BLEControls();
-
-  /*
-  group = new THREE.Group();
-  // scene.add( group );
-
-  // Cube
-
-  const geometry = new THREE.BoxBufferGeometry().toNonIndexed(); // ensure unique vertices for each triangle
-
-  const position = geometry.attributes.position;
-  const colors = [];
-  const color = new THREE.Color();
-
-  // generate for each side of the cube a different color
-
-  for ( let i = 0; i < position.count; i += 6 ) {
-
-    color.setHex( Math.random() * 0xffffff );
-
-    // first face
-
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-
-    // second face
-
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-
-  }
-
-  geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-
-  const material = new THREE.MeshBasicMaterial( { vertexColors: true } );
-
-  for ( let i = 0; i < 10; i ++ ) {
-
-    const cube = new THREE.Mesh( geometry, material );
-    cube.position.x = Math.random() * 2 - 1;
-    cube.position.y = Math.random() * 2 - 1;
-    cube.position.z = Math.random() * 2 - 1;
-    cube.scale.multiplyScalar( Math.random() + 0.5 );
-    group.add( cube );
-
-  }
-  */
+  const initZoomTrigger = 0;
+  controls = new BLEControls(initZoomTrigger);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
   container.appendChild( renderer.domElement );
 
-  initCameraDistance = 5; // keeps track of initial zoom level; set it only once
-  effect = new PeppersGhostEffect( renderer, initCameraDistance );
+  currCameraDistance = 5; // keeps track of initial zoom level; set it only once
+  effect = new PeppersGhostEffect( renderer, currCameraDistance );
   effect.setSize( window.innerWidth, window.innerHeight );
 
   window.addEventListener( 'resize', onWindowResize, false );
@@ -100,7 +53,20 @@ function animate() {
   effect.render( scene, camera );
 
   /* START: place holders for polling for interaction events */
-  scaleModel(20);
+  if (controls.gotNotification == true) {
+    
+    console.log(controls.triggerZoom);
+    if (controls.triggerZoom == 1) {
+      console.log("zooming in...");
+      scaleModel(10);
+    } else if (controls.triggerZoom == -1) {
+      console.log("zooming out...");
+      scaleModel(-10);
+    }
+
+    controls.gotNotification = false;
+    controls.triggerZoom = 0;
+  }
   /* END: place holders for polling for interaction events */
 }
 
@@ -110,11 +76,13 @@ function scaleModel(zoomPercent){
   
   if (scaleFactor >= 0 && scaleFactor < 1) {
     // zoom in by pushing cameras closer to origin
-    effect.cameraDistance = initCameraDistance * (1 - scaleFactor); 
+    effect.cameraDistance = currCameraDistance * (1 - scaleFactor); 
+    currCameraDistance = effect.cameraDistance;
   } else if (scaleFactor < 0) {
     // zoom out by pulling cameras further away from origin
     scaleFactor = Math.abs(scaleFactor);
-    effect.cameraDistance = initCameraDistance * (1 + scaleFactor); 
+    effect.cameraDistance = currCameraDistance * (1 + scaleFactor); 
+    currCameraDistance = effect.cameraDistance;
   } else {
     // cannot zoom in by more than 100%, as that places all cameras at the origin point
     console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");

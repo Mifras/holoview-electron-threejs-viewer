@@ -1,4 +1,3 @@
-// import * as THREE from './node_modules/three/src/Three.js';
 const noble = require('./node_modules/@abandonware/noble');  // Node BLE Library
 
 const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
@@ -7,7 +6,15 @@ const zoomCharUUID = '2222'; // BLE characterisitic for controlling zoom level o
 // const verticalCharUUID = '2224'; // 
 // const custom1CharUUID = '2225'; //
 
-var BLEControls = function() {    
+
+// TODO: check how to keep BLE connection alive (after 1-2 mins of inactivity, subscription to zoom level characterisitic expires currently it seems)
+// TODO: learn how to trigerr orbit controls key strokes or custom variable controls (simplifies our zooming & rotation a lot --> not a must however --> recall we can do sine & cosine manually for rotation)
+// TODO: learn how threading works in our use case: threejs UI thread maybe seperated from logic thread?, do the "noble" package event handlers run on seperate thread async?  
+var BLEControls = function(initTriggerZoom) {  
+    this.triggerZoom = initTriggerZoom; // -1 for zoom out, +1 for zoom in, initialized to 0
+    this.gotNotification = false; // set to true whenever we get a BLE notification from the controller
+    let self = this; // used to pass interaction values by reference, to the BLE event handlers
+    
     // event handler for local BLE USB state changes
     noble.on('stateChange', async (state) => {
         // check if USB device has the BLE radio powered on
@@ -62,7 +69,6 @@ var BLEControls = function() {
                         
                         // Check if we found all of our "characteristics" (control values) for the holoview interaction "service"
                         if (zoomChar) {
-                            console.log("got here!");
                             zoomChar.subscribe(function (err) {
                                 if (err) {
                                     console.log("failed to subscribe to zoomChar, error: ", err);
@@ -71,7 +77,17 @@ var BLEControls = function() {
                                 }
                             }); 
                             zoomChar.on('data', function (data, isNotification){
-                                console.log("Zoom Value Changed to: ", data.toString('utf8'));
+                                let dataReceived = data.toString('utf8');
+
+                                if (dataReceived == 'z_in') {
+                                    self.triggerZoom = 1;
+                                    self.gotNotification = true;
+                                } else if (dataReceived == 'z_out') {
+                                    self.triggerZoom = -1;
+                                    self.gotNotification = true;
+                                }
+
+                                console.log("Zoom Trigger Value is: ", self.triggerZoom);
                             });
                             // applyInteractionsToProjection()
                             // --> set a global variable to the zoom level and apply it in render function (@ viewer.js)

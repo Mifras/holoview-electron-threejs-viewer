@@ -11,7 +11,6 @@ import { OrbitControls } from "./node_modules/three/examples/jsm/controls/OrbitC
 
 var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
-
   this.reflectFromAbove = false; // TODO: we need to set this to true (for final product)
 
   // Internals
