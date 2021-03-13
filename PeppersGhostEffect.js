@@ -141,10 +141,10 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   function _rotateObjectVertical(scene) {
     var delta = clock.getDelta()
     var matrixX = new Matrix4();
-    var matrixY = new Matrix4();
+    var matrixZ = new Matrix4();
 
     matrixX.makeRotationX(delta * 2 * Math.PI / period)
-    matrixY.makeRotationY(delta * 2 * Math.PI / period);
+    matrixZ.makeRotationZ(delta * 2 * Math.PI / period);
 
     _cameraF.position.applyMatrix4(matrixX);
     _cameraF.lookAt( scene.position );
@@ -153,11 +153,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     _cameraB.lookAt( scene.position );
     _cameraB.rotation.z += 180 * ( Math.PI / 180 );
   
-    _cameraL.position.applyMatrix4(matrixY);
+    _cameraL.position.applyMatrix4(matrixZ);
     _cameraL.lookAt( scene.position );
     _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
   
-    _cameraR.position.applyMatrix4(matrixY);
+    _cameraR.position.applyMatrix4(matrixZ);
     _cameraR.lookAt( scene.position );
     _cameraR.rotation.z += 90 * ( Math.PI / 180 );
   }
