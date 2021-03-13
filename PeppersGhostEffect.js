@@ -150,7 +150,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   
     _cameraL.position.applyMatrix4(matrix);
     _cameraL.lookAt( scene.position );
-    _cameraL.rotation.z += 90 * ( Math.PI / 180 );
+    _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
   
     _cameraR.position.applyMatrix4(matrix);
     _cameraR.lookAt( scene.position );
