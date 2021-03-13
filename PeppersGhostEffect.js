@@ -89,26 +89,25 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraB.quaternion.copy( _quaternion );
       _cameraB.translateZ( - ( this.cameraDistance ) );
       _cameraB.lookAt( scene.position );
-      _cameraB.rotation.z = 180 * ( Math.PI / 180 );
+      _cameraB.rotation.z += 180 * ( Math.PI / 180 );
 
       // left
       _cameraL.position.copy( _position );
       _cameraL.quaternion.copy( _quaternion );
       _cameraL.translateX( - ( this.cameraDistance ) );
       _cameraL.lookAt( scene.position );
-      _cameraL.rotation.x = 90 * ( Math.PI / 180 );
+      _cameraL.rotation.x += 90 * ( Math.PI / 180 );
 
       // right
       _cameraR.position.copy( _position );
       _cameraR.quaternion.copy( _quaternion );
       _cameraR.translateX( this.cameraDistance );
       _cameraR.lookAt( scene.position );
-      _cameraR.rotation.x = 90 * ( Math.PI / 180 );
+      _cameraR.rotation.x += 90 * ( Math.PI / 180 );
       
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-
     _rotateObjectRight(scene);
 
     renderer.clear();
@@ -142,22 +141,23 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   };
 
   function _rotateObjectRight(scene) {
-    matrix.makeRotationY(clock.getDelta() * 2 * Math.PI / period);
-  
+    var delta = clock.getDelta()
+    matrix.makeRotationY(delta * 2 * Math.PI / period);
+
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
     
     _cameraB.position.applyMatrix4(matrix);
     _cameraB.lookAt( scene.position );
-    _cameraB.rotation.z = 180 * ( Math.PI / 180 );
+    _cameraB.rotation.z += 180 * ( Math.PI / 180 );
   
     _cameraL.position.applyMatrix4(matrix);
     _cameraL.lookAt( scene.position );
-    _cameraL.rotation.x = 90 * ( Math.PI / 180 );
+    _cameraL.rotation.z += 90 * ( Math.PI / 180 );
   
     _cameraR.position.applyMatrix4(matrix);
     _cameraR.lookAt( scene.position );
-    _cameraR.rotation.x = 90 * ( Math.PI / 180 );
+    _cameraR.rotation.z += 90 * ( Math.PI / 180 );
   }
 };
 
