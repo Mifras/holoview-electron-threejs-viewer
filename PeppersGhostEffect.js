@@ -1,9 +1,10 @@
 import {
   PerspectiveCamera,
   Quaternion,
-  Vector3
+  Vector3,
+  Clock,
+  Matrix4
 } from './node_modules/three/src/Three.js';
-import { OrbitControls } from "./node_modules/three/examples/jsm/controls/OrbitControls.js";
 
 /**
  * peppers ghost effect based on http://www.instructables.com/id/Reflective-Prism/?ALLSTEPS
@@ -24,6 +25,9 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
   
+  var clock = new Clock();
+  var matrix = new Matrix4();
+  var period = 5; 
 
   // @ameen - how does @this.cameraDistance even work?
   console.log("Ameen look here");
@@ -35,14 +39,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _position = new Vector3();
   var _quaternion = new Quaternion();
   var _scale = new Vector3();
-
-  // /* START: experiment with orbit controls for rotation around center of 3D model */
-  // TODO: If orbit controls fails, could try rotating full scene (setting it as group like below with cubes example)
-  var _orbitF = new OrbitControls( _cameraF, renderer.domElement ); _orbitF.autoRotate = false; _orbitF.autoRotateSpeed = 25.0;
-  var _orbitB = new OrbitControls( _cameraB, renderer.domElement ); _orbitB.autoRotate = false; _orbitB.autoRotateSpeed = 25.0;
-  var _orbitL = new OrbitControls( _cameraL, renderer.domElement ); _orbitL.autoRotate = false; _orbitL.autoRotateSpeed = 25.0; 
-  var _orbitR = new OrbitControls( _cameraR, renderer.domElement ); _orbitR.autoRotate = false; _orbitR.autoRotateSpeed = 25.0; 
-  // /* END: experiment with orbit controls for rotation around center of 3D model */
 
   // Effect Render Initialization
   renderer.autoClear = false;
@@ -112,6 +108,9 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       this.prevCameraDistance = this.cameraDistance;
     }  
     
+
+    _rotateObjectRight(scene);
+
     renderer.clear();
     // @ameen - why is this true here and then false at the end of this function?
     renderer.setScissorTest( true );
@@ -141,6 +140,25 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     _allCameras.forEach(cam => console.log(cam.rotation));
     // console.log(_allCameras);
   };
+
+  function _rotateObjectRight(scene) {
+    matrix.makeRotationY(clock.getDelta() * 2 * Math.PI / period);
+  
+    _cameraF.position.applyMatrix4(matrix);
+    _cameraF.lookAt( scene.position );
+    
+    _cameraB.position.applyMatrix4(matrix);
+    _cameraB.lookAt( scene.position );
+    _cameraB.rotation.z = 180 * ( Math.PI / 180 );
+  
+    _cameraL.position.applyMatrix4(matrix);
+    _cameraL.lookAt( scene.position );
+    _cameraL.rotation.x = 90 * ( Math.PI / 180 );
+  
+    _cameraR.position.applyMatrix4(matrix);
+    _cameraR.lookAt( scene.position );
+    _cameraR.rotation.x = 90 * ( Math.PI / 180 );
+  }
 };
 
 export { PeppersGhostEffect };

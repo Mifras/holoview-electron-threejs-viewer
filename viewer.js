@@ -111,3 +111,63 @@ function loadLocalScene(scene) {
   );
 
 }
+
+
+function onWindowResize() {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  effect.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+
+// This function is continously called
+function animate() {
+  requestAnimationFrame( animate );
+
+  effect.render( scene, camera );
+
+  /* START: place holders for polling for interaction events */
+  if (controls.gotNotification == true) {
+    
+    console.log(controls.triggerZoom);
+    if (controls.triggerZoom == 1) {
+      console.log("zooming in...");
+      scaleObject(10);
+    } else if (controls.triggerZoom == -1) {
+      console.log("zooming out...");
+      scaleObject(-10);
+    }
+
+    controls.gotNotification = false;
+    controls.triggerZoom = 0;
+  }
+  /* END: place holders for polling for interaction events */
+}
+
+
+// Input: Zoom percentage number: positive for zooming in & negative for zooming out
+function scaleObject(zoomPercent){
+  var scaleFactor = zoomPercent / 100;
+  
+  if (scaleFactor >= 0 && scaleFactor < 1) {
+    // zoom in by pushing cameras closer to origin
+    effect.cameraDistance = currCameraDistance * (1 - scaleFactor); 
+    currCameraDistance = effect.cameraDistance;
+  } else if (scaleFactor < 0) {
+    // zoom out by pulling cameras further away from origin
+    scaleFactor = Math.abs(scaleFactor);
+    effect.cameraDistance = currCameraDistance * (1 + scaleFactor); 
+    currCameraDistance = effect.cameraDistance;
+  } else {
+    // cannot zoom in by more than 100%, as that places all cameras at the origin point
+    console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
+  }
+}
+
+
+function rotateObjectRight() {
+  effect.rotateObjectRight();
+}
