@@ -135,9 +135,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 		renderer.render( scene, _cameraL );
 
 		renderer.setScissorTest( false );
-
-    console.log("\nAmeen look here for camera properties:");
-    _allCameras.forEach(cam => console.log(cam.rotation));
     // console.log(_allCameras);
   };
 
@@ -149,15 +146,15 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     
     _cameraB.position.applyMatrix4(matrix);
     _cameraB.lookAt( scene.position );
-    _cameraB.rotation.z = 180 * ( Math.PI / 180 );
+    _cameraB.rotation.z += 180 * ( Math.PI / 180 );
   
     _cameraL.position.applyMatrix4(matrix);
     _cameraL.lookAt( scene.position );
-    _cameraL.rotation.x = 90 * ( Math.PI / 180 );
+    _cameraL.rotation.x += 90 * ( Math.PI / 180 );
   
     _cameraR.position.applyMatrix4(matrix);
     _cameraR.lookAt( scene.position );
-    _cameraR.rotation.x = 90 * ( Math.PI / 180 );
+    _cameraR.rotation.x += 90 * ( Math.PI / 180 );
   }
 };
 
