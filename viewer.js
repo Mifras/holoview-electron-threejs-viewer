@@ -15,58 +15,11 @@ function init() {
   container = document.createElement( 'div' );
   document.body.appendChild( container );
 
+  // @ameen what is this camera exactly?
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
 
   scene = new THREE.Scene();
   loadLocalScene(scene);
-
-  /*
-  group = new THREE.Group();
-  // scene.add( group );
-
-  // Cube
-
-  const geometry = new THREE.BoxBufferGeometry().toNonIndexed(); // ensure unique vertices for each triangle
-
-  const position = geometry.attributes.position;
-  const colors = [];
-  const color = new THREE.Color();
-
-  // generate for each side of the cube a different color
-
-  for ( let i = 0; i < position.count; i += 6 ) {
-
-    color.setHex( Math.random() * 0xffffff );
-
-    // first face
-
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-
-    // second face
-
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-    colors.push( color.r, color.g, color.b );
-
-  }
-
-  geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-
-  const material = new THREE.MeshBasicMaterial( { vertexColors: true } );
-
-  for ( let i = 0; i < 10; i ++ ) {
-
-    const cube = new THREE.Mesh( geometry, material );
-    cube.position.x = Math.random() * 2 - 1;
-    cube.position.y = Math.random() * 2 - 1;
-    cube.position.z = Math.random() * 2 - 1;
-    cube.scale.multiplyScalar( Math.random() + 0.5 );
-    group.add( cube );
-
-  }
-  */
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -77,6 +30,7 @@ function init() {
   effect.setSize( window.innerWidth, window.innerHeight );
   
   /* START: place holders for polling for interaction events */
+  // @ameen - what is this function really doing and when is it invoked?
   scaleModel(20);
   /* END: place holders for polling for interaction events */
 
@@ -93,8 +47,8 @@ function onWindowResize() {
 
 }
 
+// This function is continously called
 function animate() {
-
   requestAnimationFrame( animate );
 
   // group.rotation.y += 0.01;
@@ -121,6 +75,8 @@ function scaleModel(zoomPercent){
 }
 
 /**
+ * Update the currently displayed scene
+ * 
  * Call loadLocalScene after updating the path to the next/ specified scene
  * @mifras implement a method to update the localStorage.currentScene path
  */
