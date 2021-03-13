@@ -21,6 +21,10 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _cameraB = new PerspectiveCamera(); //back
   var _cameraL = new PerspectiveCamera(); //left
   var _cameraR = new PerspectiveCamera(); //right
+
+  var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
+  
+
   // @ameen - how does @this.cameraDistance even work?
   console.log("Ameen look here");
   console.log(this);
@@ -89,21 +93,21 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraB.quaternion.copy( _quaternion );
       _cameraB.translateZ( - ( this.cameraDistance ) );
       _cameraB.lookAt( scene.position );
-      _cameraB.rotation.z += 180 * ( Math.PI / 180 );
+      _cameraB.rotation.z = 180 * ( Math.PI / 180 );
 
       // left
       _cameraL.position.copy( _position );
       _cameraL.quaternion.copy( _quaternion );
       _cameraL.translateX( - ( this.cameraDistance ) );
       _cameraL.lookAt( scene.position );
-      _cameraL.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraL.rotation.x = 90 * ( Math.PI / 180 );
 
       // right
       _cameraR.position.copy( _position );
       _cameraR.quaternion.copy( _quaternion );
       _cameraR.translateX( this.cameraDistance );
       _cameraR.lookAt( scene.position );
-      _cameraR.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraR.rotation.x = 90 * ( Math.PI / 180 );
       
       this.prevCameraDistance = this.cameraDistance;
     }  
@@ -132,6 +136,10 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 		renderer.render( scene, _cameraL );
 
 		renderer.setScissorTest( false );
+
+    console.log("\nAmeen look here for camera properties:");
+    _allCameras.forEach(cam => console.log(cam.rotation));
+    // console.log(_allCameras);
   };
 };
 
