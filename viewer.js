@@ -112,42 +112,6 @@ function loadLocalScene(scene) {
 
 }
 
-
-function onWindowResize() {
-
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  effect.setSize( window.innerWidth, window.innerHeight );
-
-}
-
-
-// This function is continously called
-function animate() {
-  requestAnimationFrame( animate );
-
-  effect.render( scene, camera );
-
-  /* START: place holders for polling for interaction events */
-  if (controls.gotNotification == true) {
-    
-    console.log(controls.triggerZoom);
-    if (controls.triggerZoom == 1) {
-      console.log("zooming in...");
-      scaleObject(10);
-    } else if (controls.triggerZoom == -1) {
-      console.log("zooming out...");
-      scaleObject(-10);
-    }
-
-    controls.gotNotification = false;
-    controls.triggerZoom = 0;
-  }
-  /* END: place holders for polling for interaction events */
-}
-
-
 // Input: Zoom percentage number: positive for zooming in & negative for zooming out
 function scaleObject(zoomPercent){
   var scaleFactor = zoomPercent / 100;

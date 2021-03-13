@@ -134,9 +134,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 		renderer.render( scene, _cameraL );
 
 		renderer.setScissorTest( false );
-
-    console.log("\nAmeen look here for camera properties:");
-    _allCameras.forEach(cam => console.log(cam.rotation));
     // console.log(_allCameras);
   };
 
