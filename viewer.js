@@ -97,10 +97,17 @@ function animate() {
     console.log(controls.triggerZoom);
     if (controls.triggerZoom == 1) {
       console.log("zooming in...");
+<<<<<<< HEAD
       scaleModel(10);
     } else if (controls.triggerZoom == -1) {
       console.log("zooming out...");
       scaleModel(-10);
+=======
+      scaleObject(10);
+    } else if (controls.triggerZoom == -1) {
+      console.log("zooming out...");
+      scaleObject(-10);
+>>>>>>> fix-rotation
     }
 
     controls.gotNotification = false;
@@ -111,7 +118,7 @@ function animate() {
 
 
 // Input: Zoom percentage number: positive for zooming in & negative for zooming out
-function scaleModel(zoomPercent){
+function scaleObject(zoomPercent){
   var scaleFactor = zoomPercent / 100;
   
   if (scaleFactor >= 0 && scaleFactor < 1) {
@@ -129,3 +136,7 @@ function scaleModel(zoomPercent){
   }
 }
 
+
+function rotateObjectRight() {
+  effect.rotateObjectRight();
+}
