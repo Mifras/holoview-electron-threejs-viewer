@@ -31,7 +31,7 @@ function init() {
   
   /* START: place holders for polling for interaction events */
   // @ameen - what is this function really doing and when is it invoked?
-  scaleModel(20);
+  scaleObject(20);
   /* END: place holders for polling for interaction events */
 
   window.addEventListener( 'resize', onWindowResize, false );
@@ -55,23 +55,6 @@ function animate() {
 
   effect.render( scene, camera );
 
-}
-
-// Input: Zoom percentage number: positive for zooming in & negative for zooming out
-function scaleModel(zoomPercent){
-  var scaleFactor = zoomPercent / 100;
-  
-  if (scaleFactor >= 0 && scaleFactor < 1) {
-    // zoom in by pushing cameras closer to origin
-    effect.cameraDistance = initCameraDistance * (1 - scaleFactor); 
-  } else if (scaleFactor < 0) {
-    // zoom out by pulling cameras further away from origin
-    scaleFactor = Math.abs(scaleFactor);
-    effect.cameraDistance = initCameraDistance * (1 + scaleFactor); 
-  } else {
-    // cannot zoom in by more than 100%, as that places all cameras at the origin point
-    console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
-  }
 }
 
 /**
