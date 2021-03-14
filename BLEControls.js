@@ -8,8 +8,9 @@ const zoomCharUUID = '2222'; // BLE characterisitic for controlling zoom level o
 
 const nameCharUUID = '2230';
 
+const keepAliveCharUUID = '2200';
 
-// TODO: check how to keep BLE connection alive (after 1-2 mins of inactivity, subscription to zoom level characterisitic expires currently it seems)
+
 // TODO: learn how threading works in our use case: threejs UI thread maybe seperated from logic thread?, do the "noble" package event handlers run on seperate thread async?  
 var BLEControls = function(initTriggerZoom) {  
     let self = this; // used to pass interaction values by reference, to the BLE event handlers
@@ -22,8 +23,6 @@ var BLEControls = function(initTriggerZoom) {
         // check if USB device has the BLE radio powered on
         if (state === 'poweredOn') {
             console.log("Local BLE USB is functional, scanning for bluetooth interaction controller...")
-            // - search for a device that has the GATT profile service IDs in the array (1st param)
-            // - don't allow duplicate findings (2nd param)
             noble.startScanning([interactionServiceUUID], false);
         } else {
             console.log("Local BLE USB is powered off or currently starting up...")
@@ -31,13 +30,12 @@ var BLEControls = function(initTriggerZoom) {
         }
     });
 
-    let zoomChar, nameChar;
+    let zoomChar, nameChar, keepAliveChar;
 
     noble.on('discover', async (peripheral) => {
-        // we found the holoview controller (BLE peripheral)
+        // console.log('Peripheral.advertisement: ', peripheral.advertisement);
+        console.log('Found BLE interaction controller!');
         noble.stopScanning();
-
-        console.log('Found BLE interaction controller! Peripheral.advertisement: ', peripheral.advertisement);
         
         peripheral.connect(function(err) {
             if (err) {
@@ -52,22 +50,21 @@ var BLEControls = function(initTriggerZoom) {
                 }
 
                 services.forEach(function (service) {
-                    console.log('found interaction service! service.uuid: ', service.uuid);
+                    console.log('found the interaction service with UUID: ', service.uuid);
 
                     service.discoverCharacteristics([], function (err, characteristics) {
                         if (err) {
                             console.error(err);
                             return;
                         }
-
                         characteristics.forEach(function (characteristic) {
-                        
-                            console.log('found an interaction service characteristic! characteristic.uuid: ', characteristic.uuid);
-
+                            console.log('found an interaction service characteristic with UUID: ', characteristic.uuid);
                             if (zoomCharUUID === characteristic.uuid) {
                                 zoomChar = characteristic;
                             } else if (nameCharUUID == characteristic.uuid) {
                                 nameChar = characteristic;
+                            } else if (keepAliveCharUUID == characteristic.uuid) {
+                                keepAliveChar = characteristic;
                             }
                         });
                         
@@ -93,8 +90,6 @@ var BLEControls = function(initTriggerZoom) {
 
                                 console.log("Zoom Trigger Value is: ", self.triggerZoom);
                             });
-                            // applyInteractionsToProjection()
-                            // --> set a global variable to the zoom level and apply it in render function (@ viewer.js)
                         } else {
                             console.log('Some of the required BLE interaction characteristics are missing!');
                         }
@@ -118,12 +113,20 @@ var BLEControls = function(initTriggerZoom) {
                 self.wroteObjectDetails = true;
             }
         });
-    }
+    };
 
 
+    // TODO: write small messages to controller to keep alive
     this.keepConnectionAlive = function() {
-        // TODO: write small messages to controller to keep alive
-        return;
+        if (keepAliveChar == null) { return; }
+
+        const buf = Buffer.alloc(1);
+        buf.write("x");
+        keepAliveChar.write(buf, true, function(err) {
+            if (err) {
+                console.log("failed to keep controller BLE connection alive");
+            }
+        });
     };
     
 }

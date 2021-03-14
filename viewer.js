@@ -107,6 +107,8 @@ function animate() {
     controls.gotNotification = false;
     controls.triggerZoom = 0;
   }
+
+  controls.keepConnectionAlive();
 }
 
 
