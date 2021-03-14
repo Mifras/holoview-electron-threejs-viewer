@@ -91,22 +91,22 @@ function animate() {
 
   effect.render( scene, camera );
 
-  /* START: place holders for polling for interaction events */
+  // Send new object details to controller if not done before 
+  if (controls.wroteObjectDetails == false) {
+    controls.sendObjectData("hello");
+  }
+  // Check for BLE interaction notifications
   if (controls.gotNotification == true) {
     
-    console.log(controls.triggerZoom);
     if (controls.triggerZoom == 1) {
-      console.log("zooming in...");
       scaleObject(10);
     } else if (controls.triggerZoom == -1) {
-      console.log("zooming out...");
       scaleObject(-10);
     }
 
     controls.gotNotification = false;
     controls.triggerZoom = 0;
   }
-  /* END: place holders for polling for interaction events */
 }
 
 

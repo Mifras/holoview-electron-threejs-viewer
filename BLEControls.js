@@ -6,14 +6,16 @@ const zoomCharUUID = '2222'; // BLE characterisitic for controlling zoom level o
 // const verticalCharUUID = '2224'; // 
 // const custom1CharUUID = '2225'; //
 
+const nameCharUUID = '2230';
+
 
 // TODO: check how to keep BLE connection alive (after 1-2 mins of inactivity, subscription to zoom level characterisitic expires currently it seems)
-// TODO: learn how to trigerr orbit controls key strokes or custom variable controls (simplifies our zooming & rotation a lot --> not a must however --> recall we can do sine & cosine manually for rotation)
 // TODO: learn how threading works in our use case: threejs UI thread maybe seperated from logic thread?, do the "noble" package event handlers run on seperate thread async?  
 var BLEControls = function(initTriggerZoom) {  
+    let self = this; // used to pass interaction values by reference, to the BLE event handlers
     this.triggerZoom = initTriggerZoom; // -1 for zoom out, +1 for zoom in, initialized to 0
     this.gotNotification = false; // set to true whenever we get a BLE notification from the controller
-    let self = this; // used to pass interaction values by reference, to the BLE event handlers
+    this.wroteObjectDetails = false; // set to true when we write details of a new object to controller
     
     // event handler for local BLE USB state changes
     noble.on('stateChange', async (state) => {
@@ -29,7 +31,7 @@ var BLEControls = function(initTriggerZoom) {
         }
     });
 
-    let zoomChar = null;
+    let zoomChar, nameChar;
 
     noble.on('discover', async (peripheral) => {
         // we found the holoview controller (BLE peripheral)
@@ -64,10 +66,12 @@ var BLEControls = function(initTriggerZoom) {
 
                             if (zoomCharUUID === characteristic.uuid) {
                                 zoomChar = characteristic;
+                            } else if (nameCharUUID == characteristic.uuid) {
+                                nameChar = characteristic;
                             }
                         });
                         
-                        // Check if we found all of our "characteristics" (control values) for the holoview interaction "service"
+                        // Check if we found all of our read-only "characteristics" for the holoview interaction "service"
                         if (zoomChar) {
                             zoomChar.subscribe(function (err) {
                                 if (err) {
@@ -100,6 +104,28 @@ var BLEControls = function(initTriggerZoom) {
         });
     });
 
+
+    this.sendObjectData = function (objectName) {
+        if (nameChar == null ) { return; }
+
+        const buf = Buffer.alloc(256);
+        buf.write(objectName);
+        nameChar.write(buf, false, function(err) {
+            if (err) {
+                console.log("BLE Error writing to the object name characteristic, see details: ", err);
+            } else {
+                console.log("Successfully sent new object name to BLE controller!");
+                self.wroteObjectDetails = true;
+            }
+        });
+    }
+
+
+    this.keepConnectionAlive = function() {
+        // TODO: write small messages to controller to keep alive
+        return;
+    };
+    
 }
 
 export { BLEControls };
