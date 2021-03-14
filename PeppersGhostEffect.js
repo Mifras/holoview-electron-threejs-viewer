@@ -26,7 +26,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
   
   var clock = new Clock();
-  var matrix = new Matrix4();
   var period = 5; 
 
   // @ameen - how does @this.cameraDistance even work?
@@ -96,20 +95,20 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraL.quaternion.copy( _quaternion );
       _cameraL.translateX( - ( this.cameraDistance ) );
       _cameraL.lookAt( scene.position );
-      _cameraL.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
 
       // right
       _cameraR.position.copy( _position );
       _cameraR.quaternion.copy( _quaternion );
       _cameraR.translateX( this.cameraDistance );
       _cameraR.lookAt( scene.position );
-      _cameraR.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraR.rotation.z += 90 * ( Math.PI / 180 );
       
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-    // _rotateObjectRight(scene);
-    _rotateObjectVertical(scene);
+    _rotateObjectHorizontal(scene);
+    // _rotateObjectVertical(scene);
 
     renderer.clear();
     // @ameen - why is this true here and then false at the end of this function?
@@ -139,34 +138,26 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   };
 
   function _rotateObjectVertical(scene) {
-    var delta = clock.getDelta()
-    var matrixX = new Matrix4();
-    var matrixZ = new Matrix4();
+    var matrix = new Matrix4();
+    var timeDelta = clock.getDelta();
+    matrix.makeRotationX(timeDelta * 2 * Math.PI / period)
 
-    matrixX.makeRotationX(delta * 2 * Math.PI / period)
-    matrixZ.makeRotationZ(delta * 2 * Math.PI / period);
-
-    _cameraF.position.applyMatrix4(matrixX);
+    _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
     
-    _cameraB.position.applyMatrix4(matrixX);
+    _cameraB.position.applyMatrix4(matrix);
     _cameraB.lookAt( scene.position );
     _cameraB.rotation.z += 180 * ( Math.PI / 180 );
   
-    // _cameraL.position.applyMatrix4(matrixZ);
-    // _cameraL.lookAt( scene.position );
-    // _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
-    _cameraL.rotation.z -= delta * 2 * Math.PI / period;
+    _cameraL.rotation.z -= timeDelta * 2 * Math.PI / period;
   
-    // _cameraR.position.applyMatrix4(matrixZ);
-    // _cameraR.lookAt( scene.position );
-    // _cameraR.rotation.z += 90 * ( Math.PI / 180 );
-    _cameraR.rotation.z += delta * 2 * Math.PI / period;
+    _cameraR.rotation.z += timeDelta * 2 * Math.PI / period;
   }
 
   function _rotateObjectHorizontal(scene) {
-    var delta = clock.getDelta()
-    matrix.makeRotationY(delta * 2 * Math.PI / period);
+    var matrix = new Matrix4();
+    var timeDelta = clock.getDelta();
+    matrix.makeRotationY(timeDelta * 2 * Math.PI / period);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
