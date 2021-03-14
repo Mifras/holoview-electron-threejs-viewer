@@ -153,13 +153,15 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     _cameraB.lookAt( scene.position );
     _cameraB.rotation.z += 180 * ( Math.PI / 180 );
   
-    _cameraL.position.applyMatrix4(matrixZ);
-    _cameraL.lookAt( scene.position );
-    _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
+    // _cameraL.position.applyMatrix4(matrixZ);
+    // _cameraL.lookAt( scene.position );
+    // _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
+    _cameraL.rotation.z -= delta * 2 * Math.PI / period;
   
-    _cameraR.position.applyMatrix4(matrixZ);
-    _cameraR.lookAt( scene.position );
-    _cameraR.rotation.z += 90 * ( Math.PI / 180 );
+    // _cameraR.position.applyMatrix4(matrixZ);
+    // _cameraR.lookAt( scene.position );
+    // _cameraR.rotation.z += 90 * ( Math.PI / 180 );
+    _cameraR.rotation.z += delta * 2 * Math.PI / period;
   }
 
   function _rotateObjectHorizontal(scene) {
