@@ -95,6 +95,7 @@ function animate() {
   if (controls.wroteObjectDetails == false) {
     controls.sendObjectData("hello");
   }
+  
   // Check for BLE interaction notifications
   if (controls.gotNotification == true) {
     

@@ -14,9 +14,9 @@ const keepAliveCharUUID = '2200';
 // TODO: learn how threading works in our use case: threejs UI thread maybe seperated from logic thread?, do the "noble" package event handlers run on seperate thread async?  
 var BLEControls = function(initTriggerZoom) {  
     let self = this; // used to pass interaction values by reference, to the BLE event handlers
-    this.triggerZoom = initTriggerZoom; // -1 for zoom out, +1 for zoom in, initialized to 0
-    this.gotNotification = false; // set to true whenever we get a BLE notification from the controller
-    this.wroteObjectDetails = false; // set to true when we write details of a new object to controller
+    self.triggerZoom = initTriggerZoom; // -1 for zoom out, +1 for zoom in, initialized to 0
+    self.gotNotification = false; // set to true whenever we get a BLE notification from the controller
+    self.wroteObjectDetails = false; // set to true when we write details of a new object to controller
     
     // event handler for local BLE USB state changes
     noble.on('stateChange', async (state) => {
@@ -102,6 +102,7 @@ var BLEControls = function(initTriggerZoom) {
 
     this.sendObjectData = function (objectName) {
         if (nameChar == null ) { return; }
+        self.wroteObjectDetails = true;
 
         const buf = Buffer.alloc(256);
         buf.write(objectName);
@@ -110,7 +111,6 @@ var BLEControls = function(initTriggerZoom) {
                 console.log("BLE Error writing to the object name characteristic, see details: ", err);
             } else {
                 console.log("Successfully sent new object name to BLE controller!");
-                self.wroteObjectDetails = true;
             }
         });
     };
