@@ -4,6 +4,7 @@ import { BLEControls } from './BLEControls.js';
 
 let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
+let keepAliveFrameCounter = 0; // used to keep BLE connection alive
 
 init();
 animate();
@@ -95,21 +96,23 @@ function animate() {
   if (controls.wroteObjectDetails == false) {
     controls.sendObjectData("hello");
   }
-  
+
   // Check for BLE interaction notifications
   if (controls.gotNotification == true) {
-    
-    if (controls.triggerZoom == 1) {
-      scaleObject(10);
-    } else if (controls.triggerZoom == -1) {
-      scaleObject(-10);
-    }
-
     controls.gotNotification = false;
+    if (controls.triggerZoom == 1) {
+      scaleObject(25);
+    } else if (controls.triggerZoom == -1) {
+      scaleObject(-25);
+    }
     controls.triggerZoom = 0;
   }
 
-  controls.keepConnectionAlive();
+  // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
+  if (keepAliveFrameCounter % 30 == 0) {
+    controls.keepConnectionAlive();
+  }
+  keepAliveFrameCounter += 1;
 }
 
 
