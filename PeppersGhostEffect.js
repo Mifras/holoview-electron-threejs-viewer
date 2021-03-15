@@ -107,8 +107,8 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-    _rotateObjectHorizontal(scene);
-    // _rotateObjectVertical(scene);
+    // _rotateObjectHorizontal(scene);
+    _rotateObjectVertical(scene);
 
     renderer.clear();
     // @ameen - why is this true here and then false at the end of this function?
@@ -134,24 +134,27 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 		renderer.render( scene, _cameraL );
 
 		renderer.setScissorTest( false );
-    // console.log(_allCameras);
   };
 
   function _rotateObjectVertical(scene) {
     var matrix = new Matrix4();
-    var timeDelta = clock.getDelta();
+    var timeDelta = 0.005;
     matrix.makeRotationX(timeDelta * 2 * Math.PI / period)
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
+    _cameraF.rotation.z = -0
     
     _cameraB.position.applyMatrix4(matrix);
     _cameraB.lookAt( scene.position );
-    _cameraB.rotation.z += 180 * ( Math.PI / 180 );
+    _cameraB.rotation.z = 3.141592653589793;
   
     _cameraL.rotation.z -= timeDelta * 2 * Math.PI / period;
   
     _cameraR.rotation.z += timeDelta * 2 * Math.PI / period;
+
+    // console.log(timeDelta);
+    console.log(_cameraB.rotation);
   }
 
   function _rotateObjectHorizontal(scene) {
