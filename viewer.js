@@ -21,8 +21,7 @@ function init() {
   scene = new THREE.Scene();
   loadLocalScene(scene);
 
-  const initZoomTrigger = 0;
-  controls = new BLEControls(initZoomTrigger);
+  controls = new BLEControls();
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -100,12 +99,19 @@ function animate() {
   // Check for BLE interaction notifications
   if (controls.gotNotification == true) {
     controls.gotNotification = false;
+
     if (controls.triggerZoom == 1) {
       scaleObject(25);
     } else if (controls.triggerZoom == -1) {
       scaleObject(-25);
+    } else if (controls.triggerRotateHorizontal == -1) {
+      effect.rotateObjectHorizontal(scene, -1);
+    } else if (controls.triggerRotateHorizontal == 1) {
+      effect.rotateObjectHorizontal(scene, 1);
     }
+    
     controls.triggerZoom = 0;
+    controls.triggerRotateHorizontal = 0;
   }
 
   // // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
@@ -133,9 +139,4 @@ function scaleObject(zoomPercent){
     // cannot zoom in by more than 100%, as that places all cameras at the origin point
     console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
   }
-}
-
-
-function rotateObjectRight() {
-  effect.rotateObjectRight();
 }

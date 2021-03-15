@@ -23,7 +23,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _cameraL = new PerspectiveCamera(); //left
   var _cameraR = new PerspectiveCamera(); //right
 
-  var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
+  // var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
   
   var clock = new Clock();
   var period = 5; 
@@ -103,7 +103,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-    _rotateObjectHorizontal(scene);
+    // _rotateObjectHorizontal(scene);
     // _rotateObjectVertical(scene);
 
     renderer.clear();
@@ -132,7 +132,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   };
 
 
-  function _rotateObjectVertical(scene) {
+  this.rotateObjectVertical = function(scene) {
     var matrix = new Matrix4();
     var timeDelta = clock.getDelta();
     matrix.makeRotationX(timeDelta * 2 * Math.PI / period)
@@ -150,10 +150,10 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   }
 
 
-  function _rotateObjectHorizontal(scene) {
+  this.rotateObjectHorizontal = function(scene, direction) {
     var matrix = new Matrix4();
-    var timeDelta = clock.getDelta();
-    matrix.makeRotationY(timeDelta * 2 * Math.PI / period);
+    // rotate by 45 degrees (PI/4 radians) on each click 
+    matrix.makeRotationY(direction * Math.PI / 4);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );

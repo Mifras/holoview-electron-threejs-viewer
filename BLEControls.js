@@ -1,25 +1,27 @@
 const noble = require('./node_modules/@abandonware/noble');  // Node BLE Library
 
-const interactionServiceUUID = '6e400001b5a3f393e0a9e50e24dcca9e';  // Unique BLE service ID set by the hologram interaction controller
-const zoomCharUUID = '6e400003b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
-// const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
-// const zoomCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
+// const interactionServiceUUID = '6e400001b5a3f393e0a9e50e24dcca9e';  // Unique BLE service ID set by the hologram interaction controller
+// const basicActionsCharUUID = '6e400003b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
+const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
+const basicActionsCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
 
-// const horizontalCharUUID = '2223'; // 
-// const verticalCharUUID = '2224'; // 
-// const custom1CharUUID = '2225'; //
+// const customAction1_CharUUID = '';
+// const customAction2_CharUUID = '';
+// const customAction3_CharUUID = '';
+// const customAction4_CharUUID = '';
 
-const nameCharUUID = '2230';
+const objectNameCharUUID = '2230';
 
 const keepAliveCharUUID = '2200';
 
 
 // TODO: learn how threading works in our use case: threejs UI thread maybe seperated from logic thread?, do the "noble" package event handlers run on seperate thread async?  
-var BLEControls = function(initTriggerZoom) {  
+var BLEControls = function() {  
     let self = this; // used to pass interaction values by reference, to the BLE event handlers
-    self.triggerZoom = initTriggerZoom; // -1 for zoom out, +1 for zoom in, initialized to 0
     self.gotNotification = false; // set to true whenever we get a BLE notification from the controller
     self.wroteObjectDetails = false; // set to true when we write details of a new object to controller
+    self.triggerZoom = 0; // -1 for zoom out, +1 for zoom in, initialized to 0
+    self.triggerRotateHorizontal = 0; // -1 for rotate right, 1 for rotate left, initialized to 0
     
     // event handler for local BLE USB state changes
     noble.on('stateChange', async (state) => {
@@ -33,12 +35,12 @@ var BLEControls = function(initTriggerZoom) {
         }
     });
 
-    let zoomChar, nameChar, keepAliveChar;
+    let basicActionsChar, objectNameChar, keepAliveChar;
 
     noble.on('discover', async (peripheral) => {
         console.log('Peripheral.advertisement: ', peripheral.advertisement);
-        // if (peripheral.advertisement.localName == "HoloView Tarek") {
-        if (peripheral.advertisement.localName == "HoloView Controller") {
+        if (peripheral.advertisement.localName == "HoloView Tarek") {
+        // if (peripheral.advertisement.localName == "HoloView Controller") {
             noble.stopScanning();
             console.log("Found Our BLE Interaction Controller!");
             peripheral.connect(function(err) {
@@ -63,40 +65,57 @@ var BLEControls = function(initTriggerZoom) {
                             }
                             characteristics.forEach(function (characteristic) {
                                 console.log('found an interaction service characteristic with UUID: ', characteristic.uuid);
-                                if (zoomCharUUID === characteristic.uuid) {
-                                    zoomChar = characteristic;
-                                } else if (nameCharUUID == characteristic.uuid) {
-                                    nameChar = characteristic;
+                                if (basicActionsCharUUID === characteristic.uuid) {
+                                    basicActionsChar = characteristic;
+                                } else if (objectNameCharUUID == characteristic.uuid) {
+                                    objectNameChar = characteristic;
                                 } else if (keepAliveCharUUID == characteristic.uuid) {
                                     keepAliveChar = characteristic;
                                 }
                             });
                             
                             // Check if we found all of our read-only "characteristics" for the holoview interaction "service"
-                            if (zoomChar) {
-                                console.log("COMPARE: Found the zoom characteristic: ", zoomChar);
+                            if (basicActionsChar) {
+                                console.log("COMPARE: Found the basic actions characteristic: ", basicActionsChar);
                                 
-                                zoomChar.subscribe(function (err) {
+                                basicActionsChar.subscribe(function (err) {
                                     if (err) {
-                                        console.log("failed to subscribe to zoomChar, error: ", err);
+                                        console.log("failed to subscribe to basicActionsChar, error: ", err);
                                     } else {
-                                        console.log("successfully subscribed to zoomChar!");
+                                        console.log("successfully subscribed to basicActionsChar!");
                                     }
                                 }); 
 
                                 console.log("SEE THIS: setup subscribe() done");
 
-                                zoomChar.on('data', function (data, isNotification){
+                                basicActionsChar.on('data', function (data, isNotification){
                                     let dataReceived = data.toString('utf8');
-    
-                                    if (dataReceived == 'z_in') {
-                                        self.triggerZoom = 1;
-                                        self.gotNotification = true;
-                                    } else if (dataReceived == 'z_out') {
-                                        self.triggerZoom = -1;
-                                        self.gotNotification = true;
+                                    
+                                    switch(dataReceived) {
+                                        case 'z_in':
+                                            self.triggerZoom = 1;
+                                            break;
+                                        case 'z_out':
+                                            self.triggerZoom = -1;
+                                            break;
+                                        case 'r_right':
+                                            self.triggerRotateHorizontal = -1;
+                                            break;
+                                        case 'r_left':
+                                            self.triggerRotateHorizontal = 1;
+                                            break;
+                                        case 'r_up':
+                                            break;
+                                        case 'r_down':
+                                            break;
+                                        default:
+                                            console.log("received an invalid basic object interaction");
+                                            break;
                                     }
-    
+
+                                    self.gotNotification = true;
+
+                                    console.log("Rotate Horizontal Trigger Value is: ", self.triggerRotateHorizontal);
                                     console.log("Zoom Trigger Value is: ", self.triggerZoom);
                                 });
 
@@ -113,12 +132,12 @@ var BLEControls = function(initTriggerZoom) {
 
 
     this.sendObjectData = function (objectName) {
-        if (nameChar == null ) { return; }
+        if (objectNameChar == null ) { return; }
         self.wroteObjectDetails = true;
 
         const buf = Buffer.alloc(256);
         buf.write(objectName);
-        nameChar.write(buf, false, function(err) {
+        objectNameChar.write(buf, false, function(err) {
             if (err) {
                 console.log("BLE Error writing to the object name characteristic, see details: ", err);
             } else {
