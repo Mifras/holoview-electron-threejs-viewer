@@ -26,7 +26,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
   
   var clock = new Clock();
-  var matrix = new Matrix4();
   var period = 5; 
 
   this.cameraDistance = initCameraDistance; // initial distance of each camera from scene origin point
@@ -36,6 +35,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _position = new Vector3();
   var _quaternion = new Quaternion();
   var _scale = new Vector3();
+
 
   // Effect Render Initialization
   renderer.autoClear = false;
@@ -57,6 +57,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     renderer.setSize( width, height );
 
   };
+
 
   this.render = function ( scene, camera ) {
     if (this.prevCameraDistance != this.cameraDistance) {
@@ -90,24 +91,24 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraL.quaternion.copy( _quaternion );
       _cameraL.translateX( - ( this.cameraDistance ) );
       _cameraL.lookAt( scene.position );
-      _cameraL.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
 
       // right
       _cameraR.position.copy( _position );
       _cameraR.quaternion.copy( _quaternion );
       _cameraR.translateX( this.cameraDistance );
       _cameraR.lookAt( scene.position );
-      _cameraR.rotation.x += 90 * ( Math.PI / 180 );
+      _cameraR.rotation.z += 90 * ( Math.PI / 180 );
       
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-    _rotateObjectRight(scene);
+    _rotateObjectHorizontal(scene);
+    // _rotateObjectVertical(scene);
 
     renderer.clear();
     // @ameen - why is this true here and then false at the end of this function?
     renderer.setScissorTest( true );
-
 
     // "Scissor" and "Viewport" are cropped areas of the viewer application window:
     //    This is the area used to render 1 view of the 3D model (1 view out of the 4 perspective cameras)
@@ -130,9 +131,29 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 		renderer.setScissorTest( false );
   };
 
-  function _rotateObjectRight(scene) {
-    var delta = clock.getDelta()
-    matrix.makeRotationY(delta * 2 * Math.PI / period);
+
+  function _rotateObjectVertical(scene) {
+    var matrix = new Matrix4();
+    var timeDelta = clock.getDelta();
+    matrix.makeRotationX(timeDelta * 2 * Math.PI / period)
+
+    _cameraF.position.applyMatrix4(matrix);
+    _cameraF.lookAt( scene.position );
+    
+    _cameraB.position.applyMatrix4(matrix);
+    _cameraB.lookAt( scene.position );
+    _cameraB.rotation.z += 180 * ( Math.PI / 180 );
+  
+    _cameraL.rotation.z -= timeDelta * 2 * Math.PI / period;
+  
+    _cameraR.rotation.z += timeDelta * 2 * Math.PI / period;
+  }
+
+
+  function _rotateObjectHorizontal(scene) {
+    var matrix = new Matrix4();
+    var timeDelta = clock.getDelta();
+    matrix.makeRotationY(timeDelta * 2 * Math.PI / period);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
@@ -143,12 +164,13 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   
     _cameraL.position.applyMatrix4(matrix);
     _cameraL.lookAt( scene.position );
-    _cameraL.rotation.z += 90 * ( Math.PI / 180 );
+    _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
   
     _cameraR.position.applyMatrix4(matrix);
     _cameraR.lookAt( scene.position );
     _cameraR.rotation.z += 90 * ( Math.PI / 180 );
   }
+
 };
 
 export { PeppersGhostEffect };
