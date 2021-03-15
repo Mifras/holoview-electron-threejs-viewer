@@ -28,9 +28,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var clock = new Clock();
   var period = 5; 
 
-  // @ameen - how does @this.cameraDistance even work?
-  console.log("Ameen look here");
-  console.log(this);
   this.cameraDistance = initCameraDistance; // initial distance of each camera from scene origin point
   this.prevCameraDistance = null; // keeps track of previously set camera distance (used for comparison)
 
@@ -65,8 +62,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       // this is our first time rendering or model zoom level has changed
       scene.updateMatrixWorld();
 
-      // @ameen - this ternary path is only exectued once?
-      console.log("look at me, RENDER FUNCTION");
 
       // @ameen - what are the next two code lines actually doing, the camera referenced here is the one from viewer.js
       if ( camera.parent === null ) camera.updateMatrixWorld();
@@ -107,7 +102,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-    // _rotateObjectHorizontal(scene);
+    _rotateObjectHorizontal(scene);
     _rotateObjectVertical(scene);
 
     renderer.clear();
@@ -152,14 +147,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     _cameraL.rotation.z -= timeDelta * 2 * Math.PI / period;
   
     _cameraR.rotation.z += timeDelta * 2 * Math.PI / period;
-
-    // console.log(timeDelta);
-    console.log(_cameraB.rotation);
   }
 
   function _rotateObjectHorizontal(scene) {
     var matrix = new Matrix4();
-    var timeDelta = clock.getDelta();
+    var timeDelta = 0.005;
     matrix.makeRotationY(timeDelta * 2 * Math.PI / period);
 
     _cameraF.position.applyMatrix4(matrix);
