@@ -92,10 +92,10 @@ function animate() {
 
   effect.render( scene, camera );
 
-  // Send new object details to controller if not done before 
-  if (controls.wroteObjectDetails == false) {
-    controls.sendObjectData("hello");
-  }
+  // // Send new object details to controller if not done before 
+  // if (controls.wroteObjectDetails == false) {
+  //   controls.sendObjectData("hello");
+  // }
 
   // Check for BLE interaction notifications
   if (controls.gotNotification == true) {
@@ -108,11 +108,11 @@ function animate() {
     controls.triggerZoom = 0;
   }
 
-  // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
-  if (keepAliveFrameCounter % 30 == 0) {
-    controls.keepConnectionAlive();
-  }
-  keepAliveFrameCounter += 1;
+  // // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
+  // if (keepAliveFrameCounter % 30 == 0) {
+  //   controls.keepConnectionAlive();
+  // }
+  // keepAliveFrameCounter += 1;
 }
 
 

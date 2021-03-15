@@ -1,7 +1,10 @@
 const noble = require('./node_modules/@abandonware/noble');  // Node BLE Library
 
-const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
-const zoomCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
+const interactionServiceUUID = '6e400001b5a3f393e0a9e50e24dcca9e';  // Unique BLE service ID set by the hologram interaction controller
+const zoomCharUUID = '6e400003b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
+// const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
+// const zoomCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
+
 // const horizontalCharUUID = '2223'; // 
 // const verticalCharUUID = '2224'; // 
 // const custom1CharUUID = '2225'; //
@@ -23,7 +26,7 @@ var BLEControls = function(initTriggerZoom) {
         // check if USB device has the BLE radio powered on
         if (state === 'poweredOn') {
             console.log("Local BLE USB is functional, scanning for bluetooth interaction controller...")
-            noble.startScanning([interactionServiceUUID], false);
+            noble.startScanning([], false);
         } else {
             console.log("Local BLE USB is powered off or currently starting up...")
             noble.stopScanning();
@@ -33,70 +36,79 @@ var BLEControls = function(initTriggerZoom) {
     let zoomChar, nameChar, keepAliveChar;
 
     noble.on('discover', async (peripheral) => {
-        // console.log('Peripheral.advertisement: ', peripheral.advertisement);
-        console.log('Found BLE interaction controller!');
-        noble.stopScanning();
-        
-        peripheral.connect(function(err) {
-            if (err) {
-                console.error("failed to pair with BLE interaction controller, error details: ", err);
-                return;
-            }
-
-            peripheral.discoverServices([interactionServiceUUID], function (err, services) {
+        console.log('Peripheral.advertisement: ', peripheral.advertisement);
+        // if (peripheral.advertisement.localName == "HoloView Tarek") {
+        if (peripheral.advertisement.localName == "HoloView Controller") {
+            noble.stopScanning();
+            console.log("Found Our BLE Interaction Controller!");
+            peripheral.connect(function(err) {
                 if (err) {
-                    console.error(err);
+                    console.error("failed to pair with BLE interaction controller, error details: ", err);
                     return;
                 }
+    
+                peripheral.discoverServices([], function (err, services) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+    
+                    services.forEach(function (service) {
+                        console.log('found the interaction service with UUID: ', service.uuid);
+    
+                        service.discoverCharacteristics([], function (err, characteristics) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                            characteristics.forEach(function (characteristic) {
+                                console.log('found an interaction service characteristic with UUID: ', characteristic.uuid);
+                                if (zoomCharUUID === characteristic.uuid) {
+                                    zoomChar = characteristic;
+                                } else if (nameCharUUID == characteristic.uuid) {
+                                    nameChar = characteristic;
+                                } else if (keepAliveCharUUID == characteristic.uuid) {
+                                    keepAliveChar = characteristic;
+                                }
+                            });
+                            
+                            // Check if we found all of our read-only "characteristics" for the holoview interaction "service"
+                            if (zoomChar) {
+                                console.log("COMPARE: Found the zoom characteristic: ", zoomChar);
+                                
+                                zoomChar.subscribe(function (err) {
+                                    if (err) {
+                                        console.log("failed to subscribe to zoomChar, error: ", err);
+                                    } else {
+                                        console.log("successfully subscribed to zoomChar!");
+                                    }
+                                }); 
 
-                services.forEach(function (service) {
-                    console.log('found the interaction service with UUID: ', service.uuid);
+                                console.log("SEE THIS: setup subscribe() done");
 
-                    service.discoverCharacteristics([], function (err, characteristics) {
-                        if (err) {
-                            console.error(err);
-                            return;
-                        }
-                        characteristics.forEach(function (characteristic) {
-                            console.log('found an interaction service characteristic with UUID: ', characteristic.uuid);
-                            if (zoomCharUUID === characteristic.uuid) {
-                                zoomChar = characteristic;
-                            } else if (nameCharUUID == characteristic.uuid) {
-                                nameChar = characteristic;
-                            } else if (keepAliveCharUUID == characteristic.uuid) {
-                                keepAliveChar = characteristic;
+                                zoomChar.on('data', function (data, isNotification){
+                                    let dataReceived = data.toString('utf8');
+    
+                                    if (dataReceived == 'z_in') {
+                                        self.triggerZoom = 1;
+                                        self.gotNotification = true;
+                                    } else if (dataReceived == 'z_out') {
+                                        self.triggerZoom = -1;
+                                        self.gotNotification = true;
+                                    }
+    
+                                    console.log("Zoom Trigger Value is: ", self.triggerZoom);
+                                });
+
+                                console.log("SEE THIS: setup notify handler done");
+                            } else {
+                                console.log('Some of the required BLE interaction characteristics are missing!');
                             }
                         });
-                        
-                        // Check if we found all of our read-only "characteristics" for the holoview interaction "service"
-                        if (zoomChar) {
-                            zoomChar.subscribe(function (err) {
-                                if (err) {
-                                    console.log("failed to subscribe to zoomChar, error: ", err);
-                                } else {
-                                    console.log("successfully subscribed to zoomChar!");
-                                }
-                            }); 
-                            zoomChar.on('data', function (data, isNotification){
-                                let dataReceived = data.toString('utf8');
-
-                                if (dataReceived == 'z_in') {
-                                    self.triggerZoom = 1;
-                                    self.gotNotification = true;
-                                } else if (dataReceived == 'z_out') {
-                                    self.triggerZoom = -1;
-                                    self.gotNotification = true;
-                                }
-
-                                console.log("Zoom Trigger Value is: ", self.triggerZoom);
-                            });
-                        } else {
-                            console.log('Some of the required BLE interaction characteristics are missing!');
-                        }
                     });
                 });
             });
-        });
+        }
     });
 
 
