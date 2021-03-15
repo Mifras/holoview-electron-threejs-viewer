@@ -4,7 +4,7 @@ import { PeppersGhostEffect } from './PeppersGhostEffect.js';
 let container;
 
 let camera, scene, renderer, effect;
-let initCameraDistance; 
+let currCameraDistance; 
 // let group;
 
 init();
@@ -25,8 +25,8 @@ function init() {
   renderer.setPixelRatio( window.devicePixelRatio );
   container.appendChild( renderer.domElement );
 
-  initCameraDistance = 5; // keeps track of initial zoom level; set it only once
-  effect = new PeppersGhostEffect( renderer, initCameraDistance );
+  currCameraDistance = 5; // keeps track of initial zoom level; set it only once
+  effect = new PeppersGhostEffect( renderer, currCameraDistance );
   effect.setSize( window.innerWidth, window.innerHeight );
   
   /* START: place holders for polling for interaction events */
