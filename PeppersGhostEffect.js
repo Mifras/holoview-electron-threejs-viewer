@@ -92,6 +92,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraL.translateX( - ( this.cameraDistance ) );
       _cameraL.lookAt( scene.position );
       _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
+      _cameraL.rotation.x += 180 * ( Math.PI / 180 );
 
       // right
       _cameraR.position.copy( _position );
@@ -99,12 +100,15 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraR.translateX( this.cameraDistance );
       _cameraR.lookAt( scene.position );
       _cameraR.rotation.z += 90 * ( Math.PI / 180 );
+      _cameraR.rotation.z -= 180 * ( Math.PI / 180 );
+
+      // invert the x-axis on left and right
       
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-    // _rotateObjectHorizontal(scene);
-    this.rotateObjectVertical(scene);
+    // this.rotateObjectHorizontal(scene);
+    // this.rotateObjectVertical(scene);
 
     renderer.clear();
     // @ameen - why is this true here and then false at the end of this function?
@@ -122,40 +126,41 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
 		renderer.setScissor( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height );
 		renderer.setViewport( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height );
-		renderer.render( scene, _cameraR );
+		renderer.render( scene, _cameraL );
 
 		renderer.setScissor( _halfWidth + ( _width / 2 ), _height, _width, _height );
 		renderer.setViewport( _halfWidth + ( _width / 2 ), _height, _width, _height );
-		renderer.render( scene, _cameraL );
+		renderer.render( scene, _cameraR );
 
 		renderer.setScissorTest( false );
   };
 
 
-  this.rotateObjectVertical = function(scene) {
+  this.rotateObjectVertical = function(scene, direction) {
     var matrix = new Matrix4();
-    var timeDelta = 0.2;
-    matrix.makeRotationX(timeDelta * 2 * Math.PI / period)
+    var angleOfRotation = direction * Math.PI / 6; 
+    // rotate by 45 degrees (PI/4 radians) on each click 
+    matrix.makeRotationX(angleOfRotation);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
     // @ameen remove this --> doesn't do anything
-    // _cameraF.rotation.z = -0;
+    _cameraF.rotation.z = Math.PI;
     
     _cameraB.position.applyMatrix4(matrix);
     _cameraB.lookAt( scene.position );
-    _cameraB.rotation.z = Math.PI;
+    _cameraB.rotation.z = 0;
   
-    _cameraL.rotation.z -= timeDelta * 2 * Math.PI / period;
+    _cameraL.rotation.z -= angleOfRotation;
   
-    _cameraR.rotation.z += timeDelta * 2 * Math.PI / period;
+    _cameraR.rotation.z += angleOfRotation;
   }
 
 
   this.rotateObjectHorizontal = function(scene, direction) {
     var matrix = new Matrix4();
     // rotate by 45 degrees (PI/4 radians) on each click 
-    matrix.makeRotationY(direction * Math.PI / 4);
+    matrix.makeRotationY(direction * Math.PI / 6);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );

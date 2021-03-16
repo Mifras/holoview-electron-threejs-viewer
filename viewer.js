@@ -108,10 +108,15 @@ function animate() {
       effect.rotateObjectHorizontal(scene, -1);
     } else if (controls.triggerRotateHorizontal == 1) {
       effect.rotateObjectHorizontal(scene, 1);
+    } else if (controls.triggerRotateVertical == -1) {
+      effect.rotateObjectVertical(scene, -1);
+    } else if (controls.triggerRotateVertical == 1) {
+      effect.rotateObjectVertical(scene, 1);
     }
     
     controls.triggerZoom = 0;
     controls.triggerRotateHorizontal = 0;
+    controls.triggerRotateVertical = 0;
   }
 
   // // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 

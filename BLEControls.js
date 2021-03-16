@@ -24,6 +24,7 @@ var BLEControls = function() {
     self.wroteObjectDetails = false; // set to true when we write details of a new object to controller
     self.triggerZoom = 0; // -1 for zoom out, +1 for zoom in, initialized to 0
     self.triggerRotateHorizontal = 0; // -1 for rotate right, 1 for rotate left, initialized to 0
+    self.triggerRotateVertical = 0; // -1 for rotate down, 1 for rotate up, initialized to 0 
     
     // event handler for local BLE USB state changes
     noble.on('stateChange', async (state) => {
@@ -106,9 +107,9 @@ var BLEControls = function() {
                                     } else if (dataReceived.includes("r_left")) {
                                         self.triggerRotateHorizontal = 1;
                                     } else if (dataReceived.includes("r_up")) {
-                                        // not implemented
+                                        self.triggerRotateVertical = 1;
                                     } else if (dataReceived.includes("r_down")) {
-                                        // not implemented
+                                        self.triggerRotateVertical = -1;
                                     } else {
                                         console.log("received an invalid basic object interaction");
                                     }
@@ -116,6 +117,7 @@ var BLEControls = function() {
                                     self.gotNotification = true;
 
                                     console.log("Rotate Horizontal Trigger Value is: ", self.triggerRotateHorizontal);
+                                    console.log("Rotate Vertical Trigger Value is: ", self.triggerRotateHorizontal);
                                     console.log("Zoom Trigger Value is: ", self.triggerZoom);
                                 });
 
