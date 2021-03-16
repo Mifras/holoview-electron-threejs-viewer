@@ -9,7 +9,8 @@ function createWindow () {
     webPreferences: {
       enableRemoteModule: true,
       nodeIntegration: true
-    }
+    },
+    frame: false
   })
 
   win.loadFile('import.html')

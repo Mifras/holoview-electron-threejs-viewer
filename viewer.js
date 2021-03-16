@@ -4,7 +4,7 @@ import { BLEControls } from './BLEControls.js';
 
 let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
-let keepAliveFrameCounter = 0; // used to keep BLE connection alive
+// let keepAliveFrameCounter = 0; // used to keep BLE connection alive
 
 init();
 animate();
