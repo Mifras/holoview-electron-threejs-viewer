@@ -124,7 +124,17 @@ function animate() {
   let keyPressed = localStorage.getItem("keyPress");
   if (keyPressed != "empty") {
     if (keyPressed == "w") {
+      effect.rotateObjectVertical(scene, 1);
+    } else if (keyPressed == "s") {
+      effect.rotateObjectVertical(scene, -1);
+    } else if (keyPressed == "a") {
       effect.rotateObjectHorizontal(scene, 1);
+    } else if (keyPressed == "d") {
+      effect.rotateObjectHorizontal(scene, -1);
+    } else if (keyPressed == "q") {
+      effect.scaleObject(-90);
+    } else if (keyPressed == "e") {
+      effect.scaleObject(90);
     }
 
     localStorage.setItem("keyPress", "empty");

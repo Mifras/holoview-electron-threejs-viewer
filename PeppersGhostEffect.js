@@ -116,6 +116,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       
       // console.log("\n_cameraL.position:", _cameraL.position);
       // console.log("_cameraL.rotation:", _cameraL.rotation);
+      console.log("_cameraB.fov", _cameraB.fov)
     }  
     
     // this.rotateObjectHorizontal(scene);
@@ -196,6 +197,9 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     if (fraction >= 0 && fraction < 1) {
       // zoom in by narrowing cameras FoV
       _allCameras.forEach( cam => {
+        if (cam.fov > 150) {
+          return;
+        }
         cam.fov /= fraction;
         cam.updateProjectionMatrix();
       });
@@ -205,7 +209,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
         cam.fov *= Math.abs(fraction);
         cam.updateProjectionMatrix();
       });
-    } 
+    }
   }
 
 
