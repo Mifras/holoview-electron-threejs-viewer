@@ -1,14 +1,14 @@
 import * as THREE from './node_modules/three/src/Three.js';
-import { PeppersGhostEffect } from './PeppersGhostEffect.js';
+import { PeppersGhostEffect } from './PeppersGhostEffect.js'; 
+import { BLEControls } from './BLEControls.js';
 
-let container;
-
-let camera, scene, renderer, effect;
+let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
-// let group;
+// let keepAliveFrameCounter = 0; // used to keep BLE connection alive
 
 init();
 animate();
+
 
 function init() {
 
@@ -21,6 +21,8 @@ function init() {
   scene = new THREE.Scene();
   loadLocalScene(scene);
 
+  controls = new BLEControls();
+
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
   container.appendChild( renderer.domElement );
@@ -28,34 +30,11 @@ function init() {
   currCameraDistance = 5; // keeps track of initial zoom level; set it only once
   effect = new PeppersGhostEffect( renderer, currCameraDistance );
   effect.setSize( window.innerWidth, window.innerHeight );
-  
-  /* START: place holders for polling for interaction events */
-  // @ameen - what is this function really doing and when is it invoked?
-  scaleObject(20);
-  /* END: place holders for polling for interaction events */
 
   window.addEventListener( 'resize', onWindowResize, false );
 
 }
 
-function onWindowResize() {
-
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  effect.setSize( window.innerWidth, window.innerHeight );
-
-}
-
-// This function is continously called
-function animate() {
-  requestAnimationFrame( animate );
-
-  // group.rotation.y += 0.01;
-
-  effect.render( scene, camera );
-
-}
 
 /**
  * Update the currently displayed scene
@@ -63,7 +42,7 @@ function animate() {
  * Call loadLocalScene after updating the path to the next/ specified scene
  * @mifras implement a method to update the localStorage.currentScene path
  */
-function loadLocalScene(scene) {
+ function loadLocalScene(scene) {
   const loader = new THREE.ObjectLoader();
   
   var currentScene = JSON.parse(localStorage.getItem('currentScene'));
@@ -95,6 +74,58 @@ function loadLocalScene(scene) {
 
 }
 
+function onWindowResize() {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  effect.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+
+// This function is continously called
+function animate() {
+  requestAnimationFrame( animate );
+
+  effect.render( scene, camera );
+
+  // // Send new object details to controller if not done before 
+  // if (controls.wroteObjectDetails == false) {
+  //   controls.sendObjectData("hello");
+  // }
+
+  // Check for BLE interaction notifications
+  if (controls.gotNotification == true) {
+    controls.gotNotification = false;
+
+    if (controls.triggerZoom == 1) {
+      scaleObject(25);
+    } else if (controls.triggerZoom == -1) {
+      scaleObject(-25);
+    } else if (controls.triggerRotateHorizontal == -1) {
+      effect.rotateObjectHorizontal(scene, -1);
+    } else if (controls.triggerRotateHorizontal == 1) {
+      effect.rotateObjectHorizontal(scene, 1);
+    } else if (controls.triggerRotateVertical == -1) {
+      effect.rotateObjectVertical(scene, -1);
+    } else if (controls.triggerRotateVertical == 1) {
+      effect.rotateObjectVertical(scene, 1);
+    }
+    
+    controls.triggerZoom = 0;
+    controls.triggerRotateHorizontal = 0;
+    controls.triggerRotateVertical = 0;
+  }
+
+  // // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
+  // if (keepAliveFrameCounter % 30 == 0) {
+  //   controls.keepConnectionAlive();
+  // }
+  // keepAliveFrameCounter += 1;
+}
+
+
 // Input: Zoom percentage number: positive for zooming in & negative for zooming out
 function scaleObject(zoomPercent){
   var scaleFactor = zoomPercent / 100;
@@ -112,9 +143,4 @@ function scaleObject(zoomPercent){
     // cannot zoom in by more than 100%, as that places all cameras at the origin point
     console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
   }
-}
-
-
-function rotateObjectRight() {
-  effect.rotateObjectRight();
 }

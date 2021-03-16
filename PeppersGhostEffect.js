@@ -23,7 +23,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _cameraL = new PerspectiveCamera(); //left
   var _cameraR = new PerspectiveCamera(); //right
 
-  var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
+  // var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
   
   var clock = new Clock();
   var period = 5; 
@@ -57,11 +57,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   };
 
+
   this.render = function ( scene, camera ) {
     if (this.prevCameraDistance != this.cameraDistance) {
       // this is our first time rendering or model zoom level has changed
       scene.updateMatrixWorld();
-
 
       // @ameen - what are the next two code lines actually doing, the camera referenced here is the one from viewer.js
       if ( camera.parent === null ) camera.updateMatrixWorld();
@@ -91,6 +91,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraL.translateX( - ( this.cameraDistance ) );
       _cameraL.lookAt( scene.position );
       _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
+      _cameraL.rotation.x += 180 * ( Math.PI / 180 );
 
       // right
       _cameraR.position.copy( _position );
@@ -98,12 +99,15 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraR.translateX( this.cameraDistance );
       _cameraR.lookAt( scene.position );
       _cameraR.rotation.z += 90 * ( Math.PI / 180 );
+      _cameraR.rotation.x -= 180 * ( Math.PI / 180 );
+
+      // invert the x-axis on left and right
       
       this.prevCameraDistance = this.cameraDistance;
     }  
     
-    // _rotateObjectHorizontal(scene);
-    _rotateObjectVertical(scene);
+    // this.rotateObjectHorizontal(scene);
+    // this.rotateObjectVertical(scene, 1);
 
     renderer.clear();
     // @ameen - why is this true here and then false at the end of this function?
@@ -122,37 +126,39 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
 		renderer.setScissor( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height );
 		renderer.setViewport( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height );
-		renderer.render( scene, _cameraR );
+		renderer.render( scene, _cameraL );
 
 		renderer.setScissor( _halfWidth + ( _width / 2 ), _height, _width, _height );
 		renderer.setViewport( _halfWidth + ( _width / 2 ), _height, _width, _height );
-		renderer.render( scene, _cameraL );
+		renderer.render( scene, _cameraR );
 
 		renderer.setScissorTest( false );
   };
 
-  function _rotateObjectVertical(scene) {
+
+  this.rotateObjectVertical = function(scene, direction) {
     var matrix = new Matrix4();
-    var timeDelta = 0.2;
-    matrix.makeRotationX(timeDelta * 2 * Math.PI / period)
+    var angleOfRotation = direction * Math.PI / 4; 
+    matrix.makeRotationX(angleOfRotation);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
-    _cameraF.rotation.z = -0
+    _cameraF.rotation.z = 0;
     
     _cameraB.position.applyMatrix4(matrix);
     _cameraB.lookAt( scene.position );
-    _cameraB.rotation.z = 3.141592653589793;
+    _cameraB.rotation.z = 0;
   
-    _cameraL.rotation.z -= timeDelta * 2 * Math.PI / period;
+    _cameraL.rotation.z -= angleOfRotation;
   
-    _cameraR.rotation.z += timeDelta * 2 * Math.PI / period;
+    _cameraR.rotation.z += angleOfRotation;
   }
 
-  function _rotateObjectHorizontal(scene) {
+
+  this.rotateObjectHorizontal = function(scene, direction) {
     var matrix = new Matrix4();
-    var timeDelta = 0.2;
-    matrix.makeRotationY(timeDelta * 2 * Math.PI / period);
+    var angleOfRotation = direction * Math.PI / 4;  
+    matrix.makeRotationY(angleOfRotation);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
@@ -163,11 +169,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   
     _cameraL.position.applyMatrix4(matrix);
     _cameraL.lookAt( scene.position );
-    _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
+    _cameraL.rotation.z += 90 * ( Math.PI / 180 );
   
     _cameraR.position.applyMatrix4(matrix);
     _cameraR.lookAt( scene.position );
-    _cameraR.rotation.z += 90 * ( Math.PI / 180 );
+    _cameraR.rotation.z -= 90 * ( Math.PI / 180 );
   }
 };
 

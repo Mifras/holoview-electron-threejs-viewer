@@ -18,9 +18,11 @@
   },
   "homepage": "https://github.com/Mifras/electron-threejs-viewer#readme",
   "devDependencies": {
-    "electron": "^11.1.1"
+    "electron": "^11.1.1",
+    "electron-rebuild": "^2.3.5"
   },
   "dependencies": {
-    "three": "^0.124.0"
+    "three": "^0.126.1",
+    "@abandonware/noble": "1.9.2-10"
   }
 }

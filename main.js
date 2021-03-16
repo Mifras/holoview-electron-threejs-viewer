@@ -1,5 +1,7 @@
 const { app, BrowserWindow } = require('electron')
 
+app.allowRendererProcessReuse = false;
+
 function createWindow () {
   const win = new BrowserWindow({
     width: 800,
@@ -7,7 +9,8 @@ function createWindow () {
     webPreferences: {
       enableRemoteModule: true,
       nodeIntegration: true
-    }
+    },
+    frame: false
   })
 
   win.loadFile('import.html')
