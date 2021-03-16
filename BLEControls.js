@@ -1,22 +1,20 @@
 const noble = require('./node_modules/@abandonware/noble');  // Node BLE Library
 
-const interactionServiceUUID = '6e400001b5a3f393e0a9e50e24dcca9e';  // Unique BLE service ID set by the hologram interaction controller
-const basicActionsCharUUID = '6e400003b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
-const objectNameCharUUID = '6e400004b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
+// const interactionServiceUUID = '6e400001b5a3f393e0a9e50e24dcca9e';  // Unique BLE service ID set by the hologram interaction controller
+// const basicActionsCharUUID = '6e400003b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
+// const objectNameCharUUID = '6e400004b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
 
-
-/* PHONE TEST VALUES */
-// const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
-// const basicActionsCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
-// const objectNameCharUUID = '2230';
+/* START: PHONE TEST VALUES */
+const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
+const basicActionsCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
+const objectNameCharUUID = '2230';
 const keepAliveCharUUID = '2200';
+/* END: PHONE TEST VALUES */
 
 // const customAction1_CharUUID = '';
 // const customAction2_CharUUID = '';
 // const customAction3_CharUUID = '';
 // const customAction4_CharUUID = '';
-
-
 
 
 // TODO: learn how threading works in our use case: threejs UI thread maybe seperated from logic thread?, do the "noble" package event handlers run on seperate thread async?  
@@ -43,8 +41,8 @@ var BLEControls = function() {
 
     noble.on('discover', async (peripheral) => {
         console.log('Peripheral.advertisement: ', peripheral.advertisement);
-        // if (peripheral.advertisement.localName == "HoloView Tarek") {
-        if (peripheral.advertisement.localName == "HoloView Controller") {
+        if (peripheral.advertisement.localName == "HoloView Tarek") {
+        // if (peripheral.advertisement.localName == "HoloView Controller") {
             noble.stopScanning();
             console.log("Found Our BLE Interaction Controller!");
             peripheral.connect(function(err) {
