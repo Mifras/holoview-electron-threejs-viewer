@@ -104,6 +104,18 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       // invert the x-axis on left and right
       
       this.prevCameraDistance = this.cameraDistance;
+      
+      console.log("_cameraB.position:", _cameraB.position);
+      console.log("_cameraB.rotation:", _cameraB.rotation);
+      
+      console.log("\n_cameraF.position:", _cameraF.position);
+      console.log("_cameraF.rotation:", _cameraF.rotation);
+      
+      console.log("\n_cameraR.position:", _cameraR.position);
+      console.log("_cameraR.rotation:", _cameraR.rotation);
+      
+      console.log("\n_cameraL.position:", _cameraL.position);
+      console.log("_cameraL.rotation:", _cameraL.rotation);
     }  
     
     // this.rotateObjectHorizontal(scene);

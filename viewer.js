@@ -5,7 +5,7 @@ import { BLEControls } from './BLEControls.js';
 let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
 // let keepAliveFrameCounter = 0; // used to keep BLE connection alive
-
+localStorage.setItem("keyPress", "empty");
 init();
 animate();
 
@@ -117,6 +117,17 @@ function animate() {
     controls.triggerRotateHorizontal = 0;
     controls.triggerRotateVertical = 0;
   }
+
+  let keyPressed = localStorage.getItem("keyPress");
+  if (keyPressed != "empty") {
+    if (keyPressed == "w") {
+      effect.rotateObjectHorizontal(scene, 1);
+    }
+
+    localStorage.setItem("keyPress", "empty");
+  }
+
+  // console.log(localStorage.getItem("keyPress"));
 
   // // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
   // if (keepAliveFrameCounter % 30 == 0) {
