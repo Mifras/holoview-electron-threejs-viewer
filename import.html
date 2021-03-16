@@ -4,11 +4,35 @@
     <meta charset="UTF-8">
     <title>Import</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <style>
+      body {
+        background-color: black;
+        color: white;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+      }
+      button {
+        display: block;
+        background: white;
+        border: 2px solid grey;
+        width: 100%;
+        height: 40px;
+        font-size: 1em;
+        margin-top: 10px;
+      }
+      a {
+        color: white;
+      }
+    </style>
 </head>
-<body style="margin: 0">
-    <h1>Import an object</h1>
-    <a href="./viewer.html">TAKE ME BACK pls</a>
-    <button id="upload">invade my computer for a file</button>
+<body">
+    <h1>Import Scene Files</h1>
+    <a href="./viewer.html">Back to Viewer</a>
+    <button id="upload">Browse</button>
     <script type="module" src="./objectLoader.js"></script>
 </body>
 </html>
