@@ -138,7 +138,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   this.rotateObjectVertical = function(scene, direction) {
     var matrix = new Matrix4();
-    var angleOfRotation = -direction * Math.PI / 100; 
+    var angleOfRotation = direction * Math.PI / 100; 
     // rotate by 45 degrees (PI/4 radians) on each click 
     matrix.makeRotationX(angleOfRotation);
 
