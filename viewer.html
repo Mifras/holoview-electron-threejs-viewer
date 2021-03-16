@@ -10,7 +10,8 @@
     <script>
       let body = document.getElementById('body');
         body.addEventListener('keydown', (event) => {
-            console.log(`key=${event.key},code=${event.code}`);
+            // console.log(`key=${event.key},code=${event.code}`);
+            localStorage.setItem("keyPress", event.key);
             if(event.code === "Space") {
               window.location.href = "./import.html";
             }
