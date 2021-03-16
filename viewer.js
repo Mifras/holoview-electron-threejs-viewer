@@ -5,7 +5,9 @@ import { BLEControls } from './BLEControls.js';
 let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
 // let keepAliveFrameCounter = 0; // used to keep BLE connection alive
+let isFirstRender;
 
+localStorage.setItem("keyPress", "empty");
 init();
 animate();
 
@@ -20,6 +22,7 @@ function init() {
 
   scene = new THREE.Scene();
   loadLocalScene(scene);
+  localStorage.setItem('isFirstRender', "true");
 
   controls = new BLEControls();
 
@@ -100,9 +103,9 @@ function animate() {
     controls.gotNotification = false;
 
     if (controls.triggerZoom == 1) {
-      scaleObject(25);
+      effect.scaleObject(25);
     } else if (controls.triggerZoom == -1) {
-      scaleObject(-25);
+      effect.scaleObject(-25);
     } else if (controls.triggerRotateHorizontal == -1) {
       effect.rotateObjectHorizontal(scene, -1);
     } else if (controls.triggerRotateHorizontal == 1) {
@@ -118,6 +121,27 @@ function animate() {
     controls.triggerRotateVertical = 0;
   }
 
+  let keyPressed = localStorage.getItem("keyPress");
+  if (keyPressed != "empty") {
+    if (keyPressed == "w") {
+      effect.rotateObjectVertical(scene, 1);
+    } else if (keyPressed == "s") {
+      effect.rotateObjectVertical(scene, -1);
+    } else if (keyPressed == "a") {
+      effect.rotateObjectHorizontal(scene, 1);
+    } else if (keyPressed == "d") {
+      effect.rotateObjectHorizontal(scene, -1);
+    } else if (keyPressed == "q") {
+      effect.scaleObject(-90);
+    } else if (keyPressed == "e") {
+      effect.scaleObject(90);
+    }
+
+    localStorage.setItem("keyPress", "empty");
+  }
+
+  // console.log(localStorage.getItem("keyPress"));
+
   // // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
   // if (keepAliveFrameCounter % 30 == 0) {
   //   controls.keepConnectionAlive();
@@ -126,21 +150,4 @@ function animate() {
 }
 
 
-// Input: Zoom percentage number: positive for zooming in & negative for zooming out
-function scaleObject(zoomPercent){
-  var scaleFactor = zoomPercent / 100;
-  
-  if (scaleFactor >= 0 && scaleFactor < 1) {
-    // zoom in by pushing cameras closer to origin
-    effect.cameraDistance = currCameraDistance * (1 - scaleFactor); 
-    currCameraDistance = effect.cameraDistance;
-  } else if (scaleFactor < 0) {
-    // zoom out by pulling cameras further away from origin
-    scaleFactor = Math.abs(scaleFactor);
-    effect.cameraDistance = currCameraDistance * (1 + scaleFactor); 
-    currCameraDistance = effect.cameraDistance;
-  } else {
-    // cannot zoom in by more than 100%, as that places all cameras at the origin point
-    console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
-  }
-}
+

@@ -23,7 +23,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _cameraL = new PerspectiveCamera(); //left
   var _cameraR = new PerspectiveCamera(); //right
 
-  // var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
+  var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
   
   var clock = new Clock();
   var period = 5; 
@@ -58,8 +58,12 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   };
 
 
-  this.render = function ( scene, camera ) {
-    if (this.prevCameraDistance != this.cameraDistance) {
+  this.render = function ( scene, camera, isFirstRender ) {
+    // cameraFoV is the current field of view (zoom level of the camera)
+    // if (this.prevCameraDistance != this.cameraDistance) {
+    var isFirstRender = localStorage.getItem('isFirstRender');
+    if (isFirstRender == "true") {
+      localStorage.setItem('isFirstRender', "false");
       // this is our first time rendering or model zoom level has changed
       scene.updateMatrixWorld();
 
@@ -100,10 +104,19 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraR.lookAt( scene.position );
       _cameraR.rotation.z += 90 * ( Math.PI / 180 );
       _cameraR.rotation.x -= 180 * ( Math.PI / 180 );
-
-      // invert the x-axis on left and right
       
-      this.prevCameraDistance = this.cameraDistance;
+      // console.log("_cameraB.position:", _cameraB.position);
+      // console.log("_cameraB.rotation:", _cameraB.rotation);
+      
+      // console.log("\n_cameraF.position:", _cameraF.position);
+      // console.log("_cameraF.rotation:", _cameraF.rotation);
+      
+      // console.log("\n_cameraR.position:", _cameraR.position);
+      // console.log("_cameraR.rotation:", _cameraR.rotation);
+      
+      // console.log("\n_cameraL.position:", _cameraL.position);
+      // console.log("_cameraL.rotation:", _cameraL.rotation);
+      console.log("_cameraB.fov", _cameraB.fov)
     }  
     
     // this.rotateObjectHorizontal(scene);
@@ -175,6 +188,31 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     _cameraR.lookAt( scene.position );
     _cameraR.rotation.z -= 90 * ( Math.PI / 180 );
   }
+
+
+  // Input: Zoom percentage number: positive for zooming in & negative for zooming out
+  this.scaleObject = function(zoomPercent){
+    var fraction = zoomPercent / 100;
+    
+    if (fraction >= 0 && fraction < 1) {
+      // zoom in by narrowing cameras FoV
+      _allCameras.forEach( cam => {
+        if (cam.fov > 150) {
+          return;
+        }
+        cam.fov /= fraction;
+        cam.updateProjectionMatrix();
+      });
+    } else {
+      // zoom out by widening cameras FoV 
+      _allCameras.forEach( cam => {
+        cam.fov *= Math.abs(fraction);
+        cam.updateProjectionMatrix();
+      });
+    }
+  }
+
+
 };
 
 export { PeppersGhostEffect };
