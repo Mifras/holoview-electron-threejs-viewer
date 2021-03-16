@@ -74,7 +74,6 @@ function init() {
 
 }
 
-
 function onWindowResize() {
 
   camera.aspect = window.innerWidth / window.innerHeight;

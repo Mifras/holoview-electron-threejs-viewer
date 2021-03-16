@@ -36,7 +36,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _quaternion = new Quaternion();
   var _scale = new Vector3();
 
-
   // Effect Render Initialization
   renderer.autoClear = false;
   this.setSize = function ( width, height ) {
@@ -114,6 +113,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     // @ameen - why is this true here and then false at the end of this function?
     renderer.setScissorTest( true );
 
+
     // "Scissor" and "Viewport" are cropped areas of the viewer application window:
     //    This is the area used to render 1 view of the 3D model (1 view out of the 4 perspective cameras)
     renderer.setScissor( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height );
@@ -139,12 +139,10 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   this.rotateObjectVertical = function(scene, direction) {
     var matrix = new Matrix4();
     var angleOfRotation = direction * Math.PI / 4; 
-    // rotate by 45 degrees (PI/4 radians) on each click 
     matrix.makeRotationX(angleOfRotation);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
-    // @ameen remove this --> doesn't do anything
     _cameraF.rotation.z = 0;
     
     _cameraB.position.applyMatrix4(matrix);
@@ -159,8 +157,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   this.rotateObjectHorizontal = function(scene, direction) {
     var matrix = new Matrix4();
-    var angleOfRotation = direction * Math.PI / 4; 
-    // rotate by 45 degrees (PI/4 radians) on each click 
+    var angleOfRotation = direction * Math.PI / 4;  
     matrix.makeRotationY(angleOfRotation);
 
     _cameraF.position.applyMatrix4(matrix);
@@ -178,7 +175,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     _cameraR.lookAt( scene.position );
     _cameraR.rotation.z -= 90 * ( Math.PI / 180 );
   }
-
 };
 
 export { PeppersGhostEffect };
