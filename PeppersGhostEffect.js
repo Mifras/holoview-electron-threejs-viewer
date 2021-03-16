@@ -100,7 +100,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraR.translateX( this.cameraDistance );
       _cameraR.lookAt( scene.position );
       _cameraR.rotation.z += 90 * ( Math.PI / 180 );
-      _cameraR.rotation.z -= 180 * ( Math.PI / 180 );
+      _cameraR.rotation.x -= 180 * ( Math.PI / 180 );
 
       // invert the x-axis on left and right
       
@@ -138,7 +138,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   this.rotateObjectVertical = function(scene, direction) {
     var matrix = new Matrix4();
-    var angleOfRotation = direction * Math.PI / 6; 
+    var angleOfRotation = direction * Math.PI / 4; 
     // rotate by 45 degrees (PI/4 radians) on each click 
     matrix.makeRotationX(angleOfRotation);
 
@@ -160,7 +160,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   this.rotateObjectHorizontal = function(scene, direction) {
     var matrix = new Matrix4();
     // rotate by 45 degrees (PI/4 radians) on each click 
-    matrix.makeRotationY(direction * Math.PI / 6);
+    matrix.makeRotationY(direction * Math.PI / 4);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
@@ -171,11 +171,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   
     _cameraL.position.applyMatrix4(matrix);
     _cameraL.lookAt( scene.position );
-    _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
+    _cameraL.rotation.z += 90 * ( Math.PI / 180 );
   
     _cameraR.position.applyMatrix4(matrix);
     _cameraR.lookAt( scene.position );
-    _cameraR.rotation.z += 90 * ( Math.PI / 180 );
+    _cameraR.rotation.z -= 90 * ( Math.PI / 180 );
   }
 
 };
