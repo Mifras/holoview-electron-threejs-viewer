@@ -108,7 +108,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     }  
     
     // this.rotateObjectHorizontal(scene);
-    // this.rotateObjectVertical(scene);
+    this.rotateObjectVertical(scene, 1);
 
     renderer.clear();
     // @ameen - why is this true here and then false at the end of this function?
@@ -138,14 +138,14 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   this.rotateObjectVertical = function(scene, direction) {
     var matrix = new Matrix4();
-    var angleOfRotation = direction * Math.PI / 4; 
+    var angleOfRotation = -direction * Math.PI / 100; 
     // rotate by 45 degrees (PI/4 radians) on each click 
     matrix.makeRotationX(angleOfRotation);
 
     _cameraF.position.applyMatrix4(matrix);
     _cameraF.lookAt( scene.position );
     // @ameen remove this --> doesn't do anything
-    _cameraF.rotation.z = Math.PI;
+    _cameraF.rotation.z = 0;
     
     _cameraB.position.applyMatrix4(matrix);
     _cameraB.lookAt( scene.position );
