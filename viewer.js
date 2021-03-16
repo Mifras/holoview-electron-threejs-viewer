@@ -5,6 +5,7 @@ import { BLEControls } from './BLEControls.js';
 let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
 // let keepAliveFrameCounter = 0; // used to keep BLE connection alive
+let isFirstRender;
 
 init();
 animate();
@@ -20,6 +21,7 @@ function init() {
 
   scene = new THREE.Scene();
   loadLocalScene(scene);
+  localStorage.setItem('isFirstRender', "true");
 
   controls = new BLEControls();
 
@@ -100,9 +102,9 @@ function animate() {
     controls.gotNotification = false;
 
     if (controls.triggerZoom == 1) {
-      scaleObject(25);
+      effect.scaleObject(25);
     } else if (controls.triggerZoom == -1) {
-      scaleObject(-25);
+      effect.scaleObject(-25);
     } else if (controls.triggerRotateHorizontal == -1) {
       effect.rotateObjectHorizontal(scene, -1);
     } else if (controls.triggerRotateHorizontal == 1) {
@@ -126,21 +128,4 @@ function animate() {
 }
 
 
-// Input: Zoom percentage number: positive for zooming in & negative for zooming out
-function scaleObject(zoomPercent){
-  var scaleFactor = zoomPercent / 100;
-  
-  if (scaleFactor >= 0 && scaleFactor < 1) {
-    // zoom in by pushing cameras closer to origin
-    effect.cameraDistance = currCameraDistance * (1 - scaleFactor); 
-    currCameraDistance = effect.cameraDistance;
-  } else if (scaleFactor < 0) {
-    // zoom out by pulling cameras further away from origin
-    scaleFactor = Math.abs(scaleFactor);
-    effect.cameraDistance = currCameraDistance * (1 + scaleFactor); 
-    currCameraDistance = effect.cameraDistance;
-  } else {
-    // cannot zoom in by more than 100%, as that places all cameras at the origin point
-    console.log("Error: Invalid Zoom Level: Camera cannot be zoomed in beyond origin point...");
-  }
-}
+
