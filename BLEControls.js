@@ -117,7 +117,7 @@ var BLEControls = function() {
                                     self.gotNotification = true;
 
                                     console.log("Rotate Horizontal Trigger Value is: ", self.triggerRotateHorizontal);
-                                    console.log("Rotate Vertical Trigger Value is: ", self.triggerRotateHorizontal);
+                                    console.log("Rotate Vertical Trigger Value is: ", self.triggerRotateVertical);
                                     console.log("Zoom Trigger Value is: ", self.triggerZoom);
                                 });
 
