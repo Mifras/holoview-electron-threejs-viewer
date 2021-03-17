@@ -40,35 +40,28 @@ uploadFile.addEventListener('click', () => {
             var sceneDirectory = someScenePath.slice(0, lastSeenSlash + 1);
             var sortedPathsArray = path.filePaths.sort()
 
-            var fileToPathMap = {};
+            var allScenesList = [];
 
             // create the fileToPath obj
-            sortedPathsArray.forEach(str => {
+            sortedPathsArray.forEach(filePath => {
                 if (process.platform !== 'darwin') {
-                    var lastSlash = str.lastIndexOf("\\");
+                    var lastSlash = filePath.lastIndexOf("\\");
                 } else {
-                    var lastSlash = str.lastIndexOf("/");
+                    var lastSlash = filePath.lastIndexOf("/");
                 }
-                var startOfFileExtension = str.indexOf(".json");
-                var fileName = str.substring(lastSlash + 1, startOfFileExtension);
+                var startOfFileExtension = filePath.indexOf(".json");
+                var fileName = filePath.substring(lastSlash + 1, startOfFileExtension);
 
-                fileToPathMap[fileName] = str;
+                var sceneDetails = {
+                    fileName: fileName,
+                    filePath: filePath
+                };
+
+                allScenesList.push(sceneDetails);
             })
 
-            // create the currentScene obj
-            var firstSceneName;
-            for (var sceneName in fileToPathMap) {
-                firstSceneName = sceneName;
-                break;
-            }
-            
-            var currentScene = {
-                [firstSceneName]: fileToPathMap[firstSceneName]
-            }
-
             localStorage.setItem('sceneDirectory', sceneDirectory);
-            localStorage.setItem('allScenes', JSON.stringify(fileToPathMap));
-            localStorage.setItem('currentScene', JSON.stringify(currentScene));
+            localStorage.setItem('allScenesList', JSON.stringify(allScenesList));
         }   
     }).catch(err => { 
         console.log(err) 

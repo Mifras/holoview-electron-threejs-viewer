@@ -2,10 +2,15 @@ import * as THREE from './node_modules/three/src/Three.js';
 import { PeppersGhostEffect } from './PeppersGhostEffect.js'; 
 import { BLEControls } from './BLEControls.js';
 
+
+const FILENAME = "fileName";
+const FILEPATH = "filePath";
+
 let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
 // let keepAliveFrameCounter = 0; // used to keep BLE connection alive
 let isFirstRender;
+let oldObj = null;
 
 localStorage.setItem("keyPress", "empty");
 init();
@@ -42,15 +47,32 @@ function init() {
 /**
  * Update the currently displayed scene
  * 
- * Call loadLocalScene after updating the path to the next/ specified scene
- * @mifras implement a method to update the localStorage.currentScene path
+ * intent mapping:
+ * 
+ * 0 - 3 = load the scene at this index in the 'allScenes' object
+ *    - if this is out of 'allScenes' index, do nothing
  */
- function loadLocalScene(scene) {
+function loadLocalScene(scene, intent = 0) {
   const loader = new THREE.ObjectLoader();
   
-  var currentScene = JSON.parse(localStorage.getItem('currentScene'));
-  var currentSceneName = Object.keys(currentScene)[0];
-  var currentScenePath = currentScene[currentSceneName]
+  var allScenesList = JSON.parse(localStorage.getItem('allScenesList'));
+  
+  var currentSceneName;
+  var currentScenePath;
+
+  if (intent >= allScenesList.length) {
+    console.log("requested model does not exist in allScenesList")
+    return
+  } else {
+    currentSceneName = allScenesList[intent][FILENAME];
+    currentScenePath = allScenesList[intent][FILEPATH];
+    
+    //@AMEEN this line is concerning, implications are scary
+    // can we kill everything apart from the cameras in the scene? (optimal)
+    // save camera state, kill the scene, reload the camera state
+
+    // scene = new THREE.Scene();
+  }
 
   loader.load(
      
@@ -61,7 +83,11 @@ function init() {
     // Here the loaded data is assumed to be an object
     function ( obj ) {
       // Add the loaded object to the scene
-      scene.add( obj );
+      if (oldObj != null) {
+        scene.remove(oldObj)
+      }
+      scene.add( obj )
+      oldObj = obj
     },
 
     // onProgress callback
@@ -135,6 +161,18 @@ function animate() {
       effect.scaleObject(-90);
     } else if (keyPressed == "e") {
       effect.scaleObject(90);
+    } else if (keyPressed == "0") {
+      console.log("0 model")
+      loadLocalScene(scene, 0)
+    } else if (keyPressed == "1") {
+      console.log("1 model")
+      loadLocalScene(scene, 1)
+    } else if (keyPressed == "2") {
+      console.log("2 model")
+      loadLocalScene(scene, 2)
+    } else if (keyPressed == "3") {
+      console.log("3 model")
+      loadLocalScene(scene, 3)
     }
 
     localStorage.setItem("keyPress", "empty");
