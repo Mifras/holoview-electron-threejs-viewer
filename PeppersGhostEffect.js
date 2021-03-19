@@ -3,11 +3,14 @@ import {
   Quaternion,
   Vector3,
   Clock,
-  Matrix4
+  Matrix4,
+  MathUtils
 } from './node_modules/three/src/Three.js';
 
 /**
  * peppers ghost effect based on http://www.instructables.com/id/Reflective-Prism/?ALLSTEPS
+ * 
+ * Three js angles use Euler angles, so MathUtils.degToRad is leveraged
  */
 
 var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
@@ -60,86 +63,69 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   this.render = function ( scene, camera, isFirstRender ) {
     // cameraFoV is the current field of view (zoom level of the camera)
-    // if (this.prevCameraDistance != this.cameraDistance) {
+
     var isFirstRender = localStorage.getItem('isFirstRender');
     if (isFirstRender == "true") {
       localStorage.setItem('isFirstRender', "false");
-      // this is our first time rendering or model zoom level has changed
-      scene.updateMatrixWorld();
 
-      // @ameen - what are the next two code lines actually doing, the camera referenced here is the one from viewer.js
+      scene.updateMatrixWorld();
       if ( camera.parent === null ) camera.updateMatrixWorld();
-      // Decomposes this matrix into it's position, quaternion and scale components
-      
-      // position --> literally the position
-      // quaternion --> rotation
-      // scale --> ?? not even used elsewhere in this script
       camera.matrixWorld.decompose( _position, _quaternion, _scale );
+
+      // initialize each cameras position and quaternion
+      _allCameras.forEach(cam => {
+        cam.position.copy(_position);
+        cam.quaternion.copy(_quaternion)
+      })
       
       // front
-      _cameraF.position.copy( _position );
-      _cameraF.quaternion.copy( _quaternion );
-      _cameraF.translateZ( this.cameraDistance );
-      _cameraF.lookAt( scene.position );
+      _cameraF.translateX(this.cameraDistance);
+      _cameraF.rotation.y = MathUtils.degToRad(90);
 
       // back
-      _cameraB.position.copy( _position );
-      _cameraB.quaternion.copy( _quaternion );
-      _cameraB.translateZ( - ( this.cameraDistance ) );
-      _cameraB.lookAt( scene.position );
-      _cameraB.rotation.z += 180 * ( Math.PI / 180 );
+      _cameraB.translateX(-(this.cameraDistance));
+      _cameraB.rotation.y = MathUtils.degToRad(-90);
 
       // left
-      _cameraL.position.copy( _position );
-      _cameraL.quaternion.copy( _quaternion );
-      _cameraL.translateX( - ( this.cameraDistance ) );
-      _cameraL.lookAt( scene.position );
-      _cameraL.rotation.z -= 90 * ( Math.PI / 180 );
-      _cameraL.rotation.x += 180 * ( Math.PI / 180 );
+      _cameraL.translateZ(this.cameraDistance);
 
       // right
-      _cameraR.position.copy( _position );
-      _cameraR.quaternion.copy( _quaternion );
-      _cameraR.translateX( this.cameraDistance );
-      _cameraR.lookAt( scene.position );
-      _cameraR.rotation.z += 90 * ( Math.PI / 180 );
-      _cameraR.rotation.x -= 180 * ( Math.PI / 180 );
+      _cameraR.translateZ(-(this.cameraDistance));
+      _cameraR.rotation.x = MathUtils.degToRad(-180);
+      _cameraR.rotation.z = MathUtils.degToRad(-180);
+
+      // TODO: need to rotate the cameras to respect the output on the TV
+
+      console.log("\n_cameraF.position:", _cameraF.position);
+      console.log("_cameraF.rotation:", _cameraF.rotation);
       
-      // console.log("_cameraB.position:", _cameraB.position);
-      // console.log("_cameraB.rotation:", _cameraB.rotation);
+      console.log("\n_cameraB.position:", _cameraB.position);
+      console.log("_cameraB.rotation:", _cameraB.rotation);
       
-      // console.log("\n_cameraF.position:", _cameraF.position);
-      // console.log("_cameraF.rotation:", _cameraF.rotation);
+      console.log("\n_cameraR.position:", _cameraR.position);
+      console.log("_cameraR.rotation:", _cameraR.rotation);
       
-      // console.log("\n_cameraR.position:", _cameraR.position);
-      // console.log("_cameraR.rotation:", _cameraR.rotation);
-      
-      // console.log("\n_cameraL.position:", _cameraL.position);
-      // console.log("_cameraL.rotation:", _cameraL.rotation);
-      console.log("_cameraB.fov", _cameraB.fov)
+      console.log("\n_cameraL.position:", _cameraL.position);
+      console.log("_cameraL.rotation:", _cameraL.rotation);
     }  
-    
-    // this.rotateObjectHorizontal(scene);
-    // this.rotateObjectVertical(scene, 1);
 
     renderer.clear();
-    // @ameen - why is this true here and then false at the end of this function?
     renderer.setScissorTest( true );
-
+    
 
     // "Scissor" and "Viewport" are cropped areas of the viewer application window:
     //    This is the area used to render 1 view of the 3D model (1 view out of the 4 perspective cameras)
-    renderer.setScissor( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height );
-		renderer.setViewport( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height );
-    renderer.render( scene, _cameraB );
-
-		renderer.setScissor( _halfWidth - ( _width / 2 ), 0, _width, _height );
+    renderer.setScissor( _halfWidth - ( _width / 2 ), 0, _width, _height );
 		renderer.setViewport( _halfWidth - ( _width / 2 ), 0, _width, _height );
 		renderer.render( scene, _cameraF );
-
-		renderer.setScissor( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height );
-		renderer.setViewport( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height );
-		renderer.render( scene, _cameraL );
+		
+		renderer.setScissor( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height );
+		renderer.setViewport( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height);
+		renderer.render( scene, _cameraB);
+		
+		renderer.setScissor( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height);
+		renderer.setViewport( _halfWidth - ( _width / 2 ) - _width, _height, _width,_height);
+		renderer.render( scene, _cameraL);
 
 		renderer.setScissor( _halfWidth + ( _width / 2 ), _height, _width, _height );
 		renderer.setViewport( _halfWidth + ( _width / 2 ), _height, _width, _height );

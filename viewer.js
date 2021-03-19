@@ -9,7 +9,6 @@ const FILEPATH = "filePath";
 let container, camera, scene, renderer, effect, controls;
 let currCameraDistance; 
 // let keepAliveFrameCounter = 0; // used to keep BLE connection alive
-let isFirstRender;
 let oldObj = null;
 
 localStorage.setItem("keyPress", "empty");
@@ -22,11 +21,12 @@ function init() {
   container = document.createElement( 'div' );
   document.body.appendChild( container );
 
-  // @ameen what is this camera exactly?
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
 
   scene = new THREE.Scene();
   loadLocalScene(scene);
+
+  // on initialization of a set of scenes, all cameraes should be placed in a specific location
   localStorage.setItem('isFirstRender', "true");
 
   controls = new BLEControls();
