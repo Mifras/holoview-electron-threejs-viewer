@@ -22,14 +22,16 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   // Internals
   var _halfWidth, _width, _height;
 
-  var _cameraF = new PerspectiveCamera(); //front
-  var _cameraB = new PerspectiveCamera(); //back
-  var _cameraL = new PerspectiveCamera(); //left
-  var _cameraR = new PerspectiveCamera(); //right
+  // These camera directions are relative to how they show up on the viewer app screen itself regardless of actual rotation
+  // up, down, left, right on the viewer app screen, the position of these cmaeras on the viewer app.
+  var _cameraR = new PerspectiveCamera(); //front
+  var _cameraL = new PerspectiveCamera(); //back
+  var _cameraD = new PerspectiveCamera(); //left
+  var _cameraU = new PerspectiveCamera(); //right
 
   var camGroup = new Group();
 
-  var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
+  var _allCameras = [_cameraR, _cameraL, _cameraD, _cameraU];
   
   var clock = new Clock();
   var period = 5; 
@@ -73,10 +75,10 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       
       // add the cam group to the scene
       scene.add(camGroup);
-      camGroup.add(_cameraF)
-      camGroup.add(_cameraB)
-      camGroup.add(_cameraL)
       camGroup.add(_cameraR)
+      camGroup.add(_cameraL)
+      camGroup.add(_cameraD)
+      camGroup.add(_cameraU)
       
       scene.updateMatrixWorld();
       if ( camera.parent === null ) camera.updateMatrixWorld();
@@ -90,34 +92,36 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       })
       
       // front
-      _cameraF.translateX(this.cameraDistance);
-      _cameraF.rotation.y = MathUtils.degToRad(90);
+      _cameraR.translateX(this.cameraDistance);
+      _cameraR.rotation.y = MathUtils.degToRad(90);
+      _cameraR.rotation.x = MathUtils.degToRad(-90);
 
       // back
-      _cameraB.translateX(-(this.cameraDistance));
-      _cameraB.rotation.y = MathUtils.degToRad(-90);
+      _cameraL.translateX(-(this.cameraDistance));
+      _cameraL.rotation.y = MathUtils.degToRad(-90);
+      _cameraL.rotation.x = MathUtils.degToRad(-90);
 
       // left
-      _cameraL.translateZ(this.cameraDistance);
+      _cameraD.translateZ(this.cameraDistance);
 
       // right
-      _cameraR.translateZ(-(this.cameraDistance));
-      _cameraR.rotation.x = MathUtils.degToRad(-180);
-      _cameraR.rotation.z = MathUtils.degToRad(-180);
+      _cameraU.translateZ(-(this.cameraDistance));
+      _cameraU.rotation.x = MathUtils.degToRad(-180);
+      _cameraU.rotation.z = MathUtils.degToRad(0);
 
       // TODO: need to rotate the cameras to respect the output on the TV
 
-      // console.log("\n_cameraF.position:", _cameraF.position);
-      // console.log("_cameraF.rotation:", _cameraF.rotation);
-      
-      // console.log("\n_cameraB.position:", _cameraB.position);
-      // console.log("_cameraB.rotation:", _cameraB.rotation);
-      
-      // console.log("\n_cameraR.position:", _cameraR.position);
+      // console.log("\n_cameraF.position:", _cameraR.position);
       // console.log("_cameraR.rotation:", _cameraR.rotation);
       
-      // console.log("\n_cameraL.position:", _cameraL.position);
+      // console.log("\n_cameraB.position:", _cameraL.position);
       // console.log("_cameraL.rotation:", _cameraL.rotation);
+      
+      // console.log("\n_cameraR.position:", _cameraU.position);
+      // console.log("_cameraU.rotation:", _cameraU.rotation);
+      
+      // console.log("\n_cameraL.position:", _cameraD.position);
+      // console.log("_cameraD.rotation:", _cameraD.rotation);
     }  
 
     renderer.clear();
@@ -128,11 +132,11 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     //    This is the area used to render 1 view of the 3D model (1 view out of the 4 perspective cameras)
     renderer.setScissor( _halfWidth - ( _width / 2 ), 0, _width, _height );
 		renderer.setViewport( _halfWidth - ( _width / 2 ), 0, _width, _height );
-		renderer.render( scene, _cameraF );
+		renderer.render( scene, _cameraD );
 		
 		renderer.setScissor( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height );
 		renderer.setViewport( _halfWidth - ( _width / 2 ), ( _height * 2 ), _width, _height);
-		renderer.render( scene, _cameraB);
+		renderer.render( scene, _cameraU);
 		
 		renderer.setScissor( _halfWidth - ( _width / 2 ) - _width, _height, _width, _height);
 		renderer.setViewport( _halfWidth - ( _width / 2 ) - _width, _height, _width,_height);
