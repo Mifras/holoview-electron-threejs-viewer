@@ -4,7 +4,8 @@ import {
   Vector3,
   Clock,
   Matrix4,
-  MathUtils
+  MathUtils,
+  Group
 } from './node_modules/three/src/Three.js';
 
 /**
@@ -25,6 +26,8 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _cameraB = new PerspectiveCamera(); //back
   var _cameraL = new PerspectiveCamera(); //left
   var _cameraR = new PerspectiveCamera(); //right
+
+  var camGroup = new Group();
 
   var _allCameras = [_cameraF, _cameraB, _cameraL, _cameraR];
   
@@ -67,10 +70,18 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
     var isFirstRender = localStorage.getItem('isFirstRender');
     if (isFirstRender == "true") {
       localStorage.setItem('isFirstRender', "false");
-
+      
+      // add the cam group to the scene
+      scene.add(camGroup);
+      camGroup.add(_cameraF)
+      camGroup.add(_cameraB)
+      camGroup.add(_cameraL)
+      camGroup.add(_cameraR)
+      
       scene.updateMatrixWorld();
       if ( camera.parent === null ) camera.updateMatrixWorld();
       camera.matrixWorld.decompose( _position, _quaternion, _scale );
+      
 
       // initialize each cameras position and quaternion
       _allCameras.forEach(cam => {
@@ -96,17 +107,17 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
       // TODO: need to rotate the cameras to respect the output on the TV
 
-      console.log("\n_cameraF.position:", _cameraF.position);
-      console.log("_cameraF.rotation:", _cameraF.rotation);
+      // console.log("\n_cameraF.position:", _cameraF.position);
+      // console.log("_cameraF.rotation:", _cameraF.rotation);
       
-      console.log("\n_cameraB.position:", _cameraB.position);
-      console.log("_cameraB.rotation:", _cameraB.rotation);
+      // console.log("\n_cameraB.position:", _cameraB.position);
+      // console.log("_cameraB.rotation:", _cameraB.rotation);
       
-      console.log("\n_cameraR.position:", _cameraR.position);
-      console.log("_cameraR.rotation:", _cameraR.rotation);
+      // console.log("\n_cameraR.position:", _cameraR.position);
+      // console.log("_cameraR.rotation:", _cameraR.rotation);
       
-      console.log("\n_cameraL.position:", _cameraL.position);
-      console.log("_cameraL.rotation:", _cameraL.rotation);
+      // console.log("\n_cameraL.position:", _cameraL.position);
+      // console.log("_cameraL.rotation:", _cameraL.rotation);
     }  
 
     renderer.clear();
@@ -136,43 +147,14 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
 
   this.rotateObjectVertical = function(scene, direction) {
-    var matrix = new Matrix4();
-    var angleOfRotation = direction * Math.PI / 4; 
-    matrix.makeRotationX(angleOfRotation);
-
-    _cameraF.position.applyMatrix4(matrix);
-    _cameraF.lookAt( scene.position );
-    _cameraF.rotation.z = 0;
-    
-    _cameraB.position.applyMatrix4(matrix);
-    _cameraB.lookAt( scene.position );
-    _cameraB.rotation.z = 0;
-  
-    _cameraL.rotation.z -= angleOfRotation;
-  
-    _cameraR.rotation.z += angleOfRotation;
+    var delta = 10 * direction;
+    camGroup.rotation.x += MathUtils.degToRad(delta);
   }
 
 
   this.rotateObjectHorizontal = function(scene, direction) {
-    var matrix = new Matrix4();
-    var angleOfRotation = direction * Math.PI / 4;  
-    matrix.makeRotationY(angleOfRotation);
-
-    _cameraF.position.applyMatrix4(matrix);
-    _cameraF.lookAt( scene.position );
-    
-    _cameraB.position.applyMatrix4(matrix);
-    _cameraB.lookAt( scene.position );
-    _cameraB.rotation.z += 180 * ( Math.PI / 180 );
-  
-    _cameraL.position.applyMatrix4(matrix);
-    _cameraL.lookAt( scene.position );
-    _cameraL.rotation.z += 90 * ( Math.PI / 180 );
-  
-    _cameraR.position.applyMatrix4(matrix);
-    _cameraR.lookAt( scene.position );
-    _cameraR.rotation.z -= 90 * ( Math.PI / 180 );
+    var delta = 10 * direction;
+    camGroup.rotation.y += MathUtils.degToRad(delta);
   }
 
 
