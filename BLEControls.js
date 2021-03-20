@@ -1,14 +1,12 @@
 const noble = require('./node_modules/@abandonware/noble');  // Node BLE Library
 
-// const interactionServiceUUID = '6e400001b5a3f393e0a9e50e24dcca9e';  // Unique BLE service ID set by the hologram interaction controller
-// const basicActionsCharUUID = '6e400003b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
-// const objectNameCharUUID = '6e400004b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram 
+const interactionServiceUUID = '6e400001b5a3f393e0a9e50e24dcca9e';  // Unique BLE service ID set by the hologram interaction controller
+const basicActionsCharUUID = '6e400003b5a3f393e0a9e50e24dcca9e'; // BLE characterisitic for controlling zoom level on hologram
 
 /* START: PHONE TEST VALUES */
-const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
-const basicActionsCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
-const objectNameCharUUID = '2230';
-const keepAliveCharUUID = '2200';
+// const interactionServiceUUID = '1111';  // Unique BLE service ID set by the hologram interaction controller
+// const basicActionsCharUUID = '2222'; // BLE characterisitic for controlling zoom level on hologram 
+// const objectNameCharUUID = '2230';
 /* END: PHONE TEST VALUES */
 
 // const customAction1_CharUUID = '';
@@ -38,12 +36,12 @@ var BLEControls = function() {
         }
     });
 
-    let basicActionsChar, objectNameChar, keepAliveChar;
+    let basicActionsChar;
 
     noble.on('discover', async (peripheral) => {
         // console.log('Peripheral.advertisement: ', peripheral.advertisement);
-        if (peripheral.advertisement.localName == "HoloView Tarek") {
-        // if (peripheral.advertisement.localName == "HoloView Controller") {
+        // if (peripheral.advertisement.localName == "HoloView Tarek") {
+        if (peripheral.advertisement.localName == "HoloView Controller") {
             noble.stopScanning();
             // console.log("Found Our BLE Interaction Controller!");
             peripheral.connect(function(err) {
@@ -70,12 +68,7 @@ var BLEControls = function() {
                                 // console.log('found an interaction service characteristic with UUID: ', characteristic.uuid);
                                 if (basicActionsCharUUID === characteristic.uuid) {
                                     basicActionsChar = characteristic;
-                                } else if (objectNameCharUUID == characteristic.uuid) {
-                                    objectNameChar = characteristic;
-                                    self.sendObjectData("yo!");
-                                } else if (keepAliveCharUUID == characteristic.uuid) {
-                                    keepAliveChar = characteristic;
-                                }
+                                } 
                             });
                             
                             // Check if we found all of our read-only "characteristics" for the holoview interaction "service"
@@ -131,38 +124,6 @@ var BLEControls = function() {
             });
         }
     });
-
-
-    this.sendObjectData = function (objectName) {
-        if (objectNameChar == null ) { return; }
-        // console.log("Trying to send object details...")
-        self.wroteObjectDetails = true;
-
-        const bufSize = objectName.length;
-        const buf = Buffer.alloc(bufSize);
-        buf.write(objectName);
-        objectNameChar.write(buf, false, function(err) {
-            if (err) {
-                // console.log("BLE Error writing to the object name characteristic, see details: ", err);
-            } else {
-                // console.log("Successfully sent new object name to BLE controller!");
-            }
-        });
-    };
-
-
-    // TODO: write small messages to controller to keep alive
-    this.keepConnectionAlive = function() {
-        if (keepAliveChar == null) { return; }
-
-        const buf = Buffer.alloc(1);
-        buf.write("x");
-        keepAliveChar.write(buf, true, function(err) {
-            if (err) {
-                // console.log("failed to keep controller BLE connection alive");
-            }
-        });
-    };
     
 }
 

@@ -108,20 +108,7 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraU.translateZ(-(this.cameraDistance));
       _cameraU.rotation.x = MathUtils.degToRad(-180);
       _cameraU.rotation.z = MathUtils.degToRad(0);
-
-      // TODO: need to rotate the cameras to respect the output on the TV
-
-      // console.log("\n_cameraF.position:", _cameraR.position);
-      // console.log("_cameraR.rotation:", _cameraR.rotation);
       
-      // console.log("\n_cameraB.position:", _cameraL.position);
-      // console.log("_cameraL.rotation:", _cameraL.rotation);
-      
-      // console.log("\n_cameraR.position:", _cameraU.position);
-      // console.log("_cameraU.rotation:", _cameraU.rotation);
-      
-      // console.log("\n_cameraL.position:", _cameraD.position);
-      // console.log("_cameraD.rotation:", _cameraD.rotation);
     }  
 
     renderer.clear();

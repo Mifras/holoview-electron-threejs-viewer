@@ -177,14 +177,6 @@ function animate() {
 
     localStorage.setItem("keyPress", "empty");
   }
-
-  // console.log(localStorage.getItem("keyPress"));
-
-  // // send a keep alive BLE message to controller every 0.5 second (animate() runs at 60 FPS) 
-  // if (keepAliveFrameCounter % 30 == 0) {
-  //   controls.keepConnectionAlive();
-  // }
-  // keepAliveFrameCounter += 1;
 }
 
 
