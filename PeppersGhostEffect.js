@@ -64,6 +64,8 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       _cameraD = new PerspectiveCamera();
       _cameraU = new PerspectiveCamera();
 
+      _allCameras = [_cameraR, _cameraL, _cameraD, _cameraU];
+
       // add the cam group to the scene
       scene.add(camGroup);
       camGroup.add(_cameraR)
