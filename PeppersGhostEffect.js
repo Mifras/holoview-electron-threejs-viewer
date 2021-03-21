@@ -2,8 +2,6 @@ import {
   PerspectiveCamera,
   Quaternion,
   Vector3,
-  Clock,
-  Matrix4,
   MathUtils,
   Group
 } from './node_modules/three/src/Three.js';
@@ -15,10 +13,6 @@ import {
  */
 
 var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
-
-
-  // this.reflectFromAbove = false; // TODO: we need to set this to true (for final product)
-
   // Internals
   var _halfWidth, _width, _height;
 
@@ -30,14 +24,8 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   var _cameraU = new PerspectiveCamera(); //right
 
   var camGroup = new Group();
-
   var _allCameras = [_cameraR, _cameraL, _cameraD, _cameraU];
-  
-  var clock = new Clock();
-  var period = 5; 
-
-  this.cameraDistance = initCameraDistance; // initial distance of each camera from scene origin point
-  this.prevCameraDistance = null; // keeps track of previously set camera distance (used for comparison)
+  this.cameraDistance = initCameraDistance;
 
   // Camera Properties (Respectively: Cartesian Coordinates, Rotation, Size)
   var _position = new Vector3();
@@ -46,23 +34,17 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
   // Effect Render Initialization
   renderer.autoClear = false;
-  this.setSize = function ( width, height ) {
 
+  this.setSize = function ( width, height ) {
     _halfWidth = width / 2;
     if ( width < height ) {
-
       _width = width / 3;
       _height = width / 3;
-
     } else {
-
       _width = height / 3;
       _height = height / 3;
-
     }
-
     renderer.setSize( width, height );
-
   };
 
 
@@ -71,8 +53,19 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
     var isFirstRender = localStorage.getItem('isFirstRender');
     if (isFirstRender == "true") {
+      console.log("LOOK ME Setting cams to initial positions");
       localStorage.setItem('isFirstRender', "false");
       
+      scene.remove(camGroup);
+      
+      camGroup = new Group();
+      _cameraR = new PerspectiveCamera();
+      _cameraL = new PerspectiveCamera();
+      _cameraD = new PerspectiveCamera();
+      _cameraU = new PerspectiveCamera();
+
+      _allCameras = [_cameraR, _cameraL, _cameraD, _cameraU];
+
       // add the cam group to the scene
       scene.add(camGroup);
       camGroup.add(_cameraR)
@@ -84,7 +77,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
       if ( camera.parent === null ) camera.updateMatrixWorld();
       camera.matrixWorld.decompose( _position, _quaternion, _scale );
       
-
       // initialize each cameras position and quaternion
       _allCameras.forEach(cam => {
         cam.position.copy(_position);
@@ -113,7 +105,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
     renderer.clear();
     renderer.setScissorTest( true );
-    
 
     // "Scissor" and "Viewport" are cropped areas of the viewer application window:
     //    This is the area used to render 1 view of the 3D model (1 view out of the 4 perspective cameras)
@@ -137,13 +128,12 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   };
 
 
-  this.rotateObjectVertical = function(scene, direction) {
+  this.rotateObjectVertical = function(direction) {
     var delta = 10 * direction;
     camGroup.rotation.x += MathUtils.degToRad(delta);
   }
 
-
-  this.rotateObjectHorizontal = function(scene, direction) {
+  this.rotateObjectHorizontal = function(direction) {
     var delta = 10 * direction;
     camGroup.rotation.y += MathUtils.degToRad(delta);
   }
@@ -152,7 +142,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
   // Input: Zoom percentage number: positive for zooming in & negative for zooming out
   this.scaleObject = function(zoomPercent){
     var fraction = zoomPercent / 100;
-    
     if (fraction >= 0 && fraction < 1) {
       // zoom in by narrowing cameras FoV
       _allCameras.forEach( cam => {
@@ -173,5 +162,6 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
 
 };
+
 
 export { PeppersGhostEffect };

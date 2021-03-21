@@ -7,8 +7,6 @@ const FILENAME = "fileName";
 const FILEPATH = "filePath";
 
 let container, camera, scene, renderer, effect, controls;
-let currCameraDistance; 
-// let keepAliveFrameCounter = 0; // used to keep BLE connection alive
 let oldObj = null;
 
 localStorage.setItem("keyPress", "empty");
@@ -35,8 +33,8 @@ function init() {
   renderer.setPixelRatio( window.devicePixelRatio );
   container.appendChild( renderer.domElement );
 
-  currCameraDistance = 5; // keeps track of initial zoom level; set it only once
-  effect = new PeppersGhostEffect( renderer, currCameraDistance );
+  const initCameraDistance = 5;
+  effect = new PeppersGhostEffect( renderer, initCameraDistance );
   effect.setSize( window.innerWidth, window.innerHeight );
 
   window.addEventListener( 'resize', onWindowResize, false );
@@ -104,12 +102,9 @@ function loadLocalScene(scene, intent = 0) {
 }
 
 function onWindowResize() {
-
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-
   effect.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 
@@ -119,44 +114,56 @@ function animate() {
 
   effect.render( scene, camera );
 
-  // // Send new object details to controller if not done before 
-  // if (controls.wroteObjectDetails == false) {
-  //   controls.sendObjectData("hello");
-  // }
-
   // Check for BLE interaction notifications
   if (controls.gotNotification == true) {
     controls.gotNotification = false;
 
     if (controls.triggerZoom == 1) {
-      effect.scaleObject(25);
+      effect.scaleObject(90);
     } else if (controls.triggerZoom == -1) {
-      effect.scaleObject(-25);
+      effect.scaleObject(-90);
     } else if (controls.triggerRotateHorizontal == -1) {
-      effect.rotateObjectHorizontal(scene, -1);
+      effect.rotateObjectHorizontal(-3);
     } else if (controls.triggerRotateHorizontal == 1) {
-      effect.rotateObjectHorizontal(scene, 1);
+      effect.rotateObjectHorizontal(3);
     } else if (controls.triggerRotateVertical == -1) {
-      effect.rotateObjectVertical(scene, -1);
+      effect.rotateObjectVertical(-3);
     } else if (controls.triggerRotateVertical == 1) {
-      effect.rotateObjectVertical(scene, 1);
+      effect.rotateObjectVertical(3);
+    } else if (controls.triggerCustomInteraction == 1) {
+      console.log("0 model");
+      loadLocalScene(scene, 0);
+    } else if (controls.triggerCustomInteraction == 2) {
+      console.log("1 model");
+      loadLocalScene(scene, 1);
+    } else if (controls.triggerCustomInteraction == 3) {
+      console.log("2 model");
+      loadLocalScene(scene, 2);
+    } else if (controls.triggerCustomInteraction == 4) {
+      console.log("3 model");
+      loadLocalScene(scene, 3);
+    } else if (controls.triggerCustomInteraction == 0) {
+      console.log("home button pressed: restting current object to initial/default state");
+      localStorage.setItem('isFirstRender', "true");
     }
     
+    // reset all controls to disabled/off state after receiving notification
     controls.triggerZoom = 0;
     controls.triggerRotateHorizontal = 0;
     controls.triggerRotateVertical = 0;
+    controls.triggerCustomInteraction = -1;
   }
 
   let keyPressed = localStorage.getItem("keyPress");
   if (keyPressed != "empty") {
     if (keyPressed == "w") {
-      effect.rotateObjectVertical(scene, 1);
+      effect.rotateObjectVertical(1);
     } else if (keyPressed == "s") {
-      effect.rotateObjectVertical(scene, -1);
+      effect.rotateObjectVertical(-1);
     } else if (keyPressed == "a") {
-      effect.rotateObjectHorizontal(scene, 1);
+      effect.rotateObjectHorizontal(1);
     } else if (keyPressed == "d") {
-      effect.rotateObjectHorizontal(scene, -1);
+      effect.rotateObjectHorizontal(-1);
     } else if (keyPressed == "q") {
       effect.scaleObject(-90);
     } else if (keyPressed == "e") {
@@ -173,6 +180,9 @@ function animate() {
     } else if (keyPressed == "3") {
       console.log("3 model")
       loadLocalScene(scene, 3)
+    } else if (keyPressed == "h") {
+      console.log("home button pressed: attempting to reset cameras...");
+      localStorage.setItem('isFirstRender', "true");
     }
 
     localStorage.setItem("keyPress", "empty");
