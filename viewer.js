@@ -180,6 +180,9 @@ function animate() {
     } else if (keyPressed == "3") {
       console.log("3 model")
       loadLocalScene(scene, 3)
+    } else if (keyPressed == "h") {
+      console.log("home button pressed: attempting to reset cameras...");
+      localStorage.setItem('isFirstRender', "true");
     }
 
     localStorage.setItem("keyPress", "empty");

@@ -53,9 +53,17 @@ var PeppersGhostEffect = function ( renderer, initCameraDistance ) {
 
     var isFirstRender = localStorage.getItem('isFirstRender');
     if (isFirstRender == "true") {
-      console.log("setting cams to initial positions");
+      console.log("LOOK ME Setting cams to initial positions");
       localStorage.setItem('isFirstRender', "false");
       
+      scene.remove(camGroup);
+      
+      camGroup = new Group();
+      _cameraR = new PerspectiveCamera();
+      _cameraL = new PerspectiveCamera();
+      _cameraD = new PerspectiveCamera();
+      _cameraU = new PerspectiveCamera();
+
       // add the cam group to the scene
       scene.add(camGroup);
       camGroup.add(_cameraR)
