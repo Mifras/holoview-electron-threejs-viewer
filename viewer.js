@@ -127,9 +127,9 @@ function animate() {
     } else if (controls.triggerRotateHorizontal == 1) {
       effect.rotateObjectHorizontal(3);
     } else if (controls.triggerRotateVertical == -1) {
-      effect.rotateObjectVertical(-3);
-    } else if (controls.triggerRotateVertical == 1) {
       effect.rotateObjectVertical(3);
+    } else if (controls.triggerRotateVertical == 1) {
+      effect.rotateObjectVertical(-3);
     } else if (controls.triggerCustomInteraction == 1) {
       console.log("0 model");
       loadLocalScene(scene, 0);
