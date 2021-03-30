@@ -157,13 +157,13 @@ function animate() {
   let keyPressed = localStorage.getItem("keyPress");
   if (keyPressed != "empty") {
     if (keyPressed == "w") {
-      effect.rotateObjectVertical(1);
+      effect.rotateObjectVertical(0.25);
     } else if (keyPressed == "s") {
-      effect.rotateObjectVertical(-1);
+      effect.rotateObjectVertical(-0.25);
     } else if (keyPressed == "a") {
-      effect.rotateObjectHorizontal(1);
+      effect.rotateObjectHorizontal(0.25);
     } else if (keyPressed == "d") {
-      effect.rotateObjectHorizontal(-1);
+      effect.rotateObjectHorizontal(-0.25);
     } else if (keyPressed == "q") {
       effect.scaleObject(-90);
     } else if (keyPressed == "e") {
