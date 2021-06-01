@@ -1,5 +1,7 @@
 # holoview-electron-threejs-viewer
 
+This repo includes source code for our ECE 2021 Final Year Design Project @ University of Waterloo. 
+
 Project Demo Video: https://www.youtube.com/watch?v=T_HPYSjxnfI&ab_channel=MifrasNazeer
 
 Project Home Page: Group 64: https://www.eng.uwaterloo.ca/2021-capstone-design/electrical-computer/participants-11/
