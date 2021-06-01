@@ -1,4 +1,7 @@
-# electron-threejs-viewer
+# holoview-electron-threejs-viewer
+
+Project Demo Video: https://www.youtube.com/watch?v=T_HPYSjxnfI&ab_channel=MifrasNazeer
+Project Home Page: Group 64: https://www.eng.uwaterloo.ca/2021-capstone-design/electrical-computer/participants-11/
 
 Setup:
 - Tested with noble npm package version 1.9.2-10 (later versions are broken)
