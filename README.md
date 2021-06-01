@@ -2,9 +2,9 @@
 
 This repo includes source code for our ECE 2021 Final Year Design Project @ University of Waterloo. 
 
-Project Demo Video: https://www.youtube.com/watch?v=T_HPYSjxnfI&ab_channel=MifrasNazeer
+Project Demo: https://www.youtube.com/watch?v=T_HPYSjxnfI&ab_channel=MifrasNazeer
 
-Symposium Showcase: Group 64: https://www.eng.uwaterloo.ca/2021-capstone-design/electrical-computer/participants-11/
+Symposium: Group 64: https://www.eng.uwaterloo.ca/2021-capstone-design/electrical-computer/participants-11/
 
 Setup:
 - Tested with noble npm package version 1.9.2-10 (later versions are broken)
